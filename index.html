@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邵麟涵 · 数据分析作品集</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  --blue: #3b82f6;
+  --blue-light: #eff6ff;
+  --blue-dark: #1d4ed8;
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --purple-dark: #6d28d9;
+  --emerald: #10b981;
+  --emerald-light: #ecfdf5;
+  --emerald-dark: #059669;
+  --amber: #f59e0b;
+  --amber-light: #fffbeb;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,.06), 0 4px 6px rgba(0,0,0,.04);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,.08), 0 8px 10px rgba(0,0,0,.04);
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", "Menlo", monospace;
+
+  --max-width: 1200px;
+  --nav-height: 64px;
+}
+
+/* ===== Reset ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:var(--nav-height)}
+body{font-family:var(--font-sans);color:var(--text);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+ul{list-style:none}
+
+/* ===== Navigation ===== */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-height);
+  background:rgba(255,255,255,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;transition:all .3s ease}
+.nav.scrolled{background:rgba(255,255,255,.95);border-bottom-color:var(--border);box-shadow:var(--shadow-sm)}
+.nav-inner{max-width:var(--max-width);margin:0 auto;padding:0 24px;height:100%;
+  display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:18px;font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:32px;font-size:14px;font-weight:500;color:var(--text-secondary)}
+.nav-links a{transition:color .2s;position:relative}
+.nav-links a:hover{color:var(--text)}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;
+  background:var(--blue);border-radius:1px;transition:width .25s ease}
+.nav-links a:hover::after{width:100%}
+
+/* ===== Hero ===== */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:120px 24px 80px}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(59,130,246,.06) 0%,transparent 70%),
+             radial-gradient(ellipse 60% 50% at 80% 80%,rgba(139,92,246,.05) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 20% 70%,rgba(16,185,129,.04) 0%,transparent 70%)}
+/* Dot grid background */
+.hero-dots{position:absolute;inset:0;opacity:.35;
+  background-image:radial-gradient(circle,var(--text-muted) 1px,transparent 1px);
+  background-size:28px 28px;mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 30%,transparent 70%)}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:720px}
+.hero-badge{display:inline-block;padding:6px 16px;background:var(--blue-light);color:var(--blue-dark);
+  border-radius:100px;font-size:13px;font-weight:600;margin-bottom:28px;letter-spacing:.02em}
+.hero h1{font-size:clamp(40px,7vw,64px);font-weight:800;letter-spacing:-.03em;
+  line-height:1.15;margin-bottom:20px}
+.hero h1 .accent{background:linear-gradient(135deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-subtitle{font-size:clamp(17px,2.5vw,20px);color:var(--text-secondary);font-weight:400;
+  margin-bottom:40px;line-height:1.6;max-width:540px;margin-left:auto;margin-right:auto}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:36px;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(180deg,var(--text) 0%,var(--text-secondary) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-stat-label{font-size:13px;color:var(--text-muted);margin-top:4px;font-weight:500}
+
+.scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-muted);font-size:12px}
+.scroll-mouse{width:22px;height:34px;border:2px solid var(--text-muted);border-radius:11px;position:relative}
+.scroll-mouse::after{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  width:3px;height:8px;background:var(--text-muted);border-radius:2px;
+  animation:scrollWheel 2s ease infinite}
+@keyframes scrollWheel{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(10px)}}
+
+/* ===== Section Common ===== */
+.section{padding:80px 24px}
+.section-header{text-align:center;margin-bottom:64px}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--blue);margin-bottom:12px}
+.section-title{font-size:clamp(28px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+.section-desc{font-size:16px;color:var(--text-secondary);max-width:560px;margin:0 auto;line-height:1.7}
+
+/* ===== Project Card ===== */
+.project{max-width:var(--max-width);margin:0 auto 48px}
+.project-card{background:var(--bg-card);border-radius:var(--radius-xl);border:1px solid var(--border);
+  overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .35s ease,transform .35s ease}
+.project-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+
+.project-hero{padding:40px 44px 0;display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.project-icon{width:52px;height:52px;border-radius:var(--radius);display:flex;align-items:center;
+  justify-content:center;font-size:26px;flex-shrink:0}
+.project-icon.blue{background:var(--blue-light);color:var(--blue)}
+.project-icon.purple{background:var(--purple-light);color:var(--purple)}
+.project-icon.emerald{background:var(--emerald-light);color:var(--emerald)}
+
+.project-hero-text{flex:1;min-width:0}
+.project-hero-text h3{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+.project-subtitle{font-size:14px;color:var(--text-secondary)}
+.project-award{display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  padding:5px 12px;background:var(--amber-light);color:#b45309;
+  border-radius:100px;font-size:13px;font-weight:600}
+.project-award img.medal{width:16px;height:16px}
+
+.project-body{padding:32px 44px 40px}
+.project-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:768px){.project-body-grid{grid-template-columns:1fr}}
+
+/* Tags */
+.project-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.tag{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.01em}
+.tag.blue{background:var(--blue-light);color:var(--blue-dark)}
+.tag.purple{background:var(--purple-light);color:var(--purple-dark)}
+.tag.emerald{background:var(--emerald-light);color:var(--emerald-dark)}
+
+/* Description block */
+.desc-block{margin-bottom:20px}
+.desc-block h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--text-muted);margin-bottom:8px}
+.desc-block p{font-size:15px;color:var(--text-secondary);line-height:1.7}
+
+/* ===== Metrics Grid ===== */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.metric-card{background:var(--bg);border-radius:var(--radius);padding:18px 16px;
+  text-align:center;border:1px solid var(--border-light)}
+.metric-value{font-size:28px;font-weight:800;font-family:var(--font-mono);letter-spacing:-.02em}
+.metric-value.blue{color:var(--blue)}
+.metric-value.purple{color:var(--purple)}
+.metric-value.emerald{color:var(--emerald)}
+.metric-label{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500}
+.metric-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* ===== Pipeline ===== */
+.pipeline{display:flex;align-items:flex-start;gap:0;margin-top:24px;flex-wrap:wrap}
+.pipeline-step{flex:1;min-width:100px;text-align:center;position:relative;padding:0 8px}
+.pipeline-step::after{content:'';position:absolute;top:18px;left:calc(50% + 20px);
+  width:calc(100% - 40px);height:1.5px;background:var(--border);
+  z-index:0}
+.pipeline-step:last-child::after{display:none}
+.pipeline-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;margin:0 auto 10px;position:relative;z-index:1;font-size:15px}
+.pipeline-dot.blue{background:var(--blue-light);color:var(--blue)}
+.pipeline-dot.purple{background:var(--purple-light);color:var(--purple)}
+.pipeline-dot.emerald{background:var(--emerald-light);color:var(--emerald)}
+.pipeline-label{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.pipeline-sublabel{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* ===== Highlight Box ===== */
+.highlight-box{border-radius:var(--radius);padding:20px 24px;margin-top:20px}
+.highlight-box.blue{background:var(--blue-light);border:1px solid rgba(59,130,246,.15)}
+.highlight-box.purple{background:var(--purple-light);border:1px solid rgba(139,92,246,.15)}
+.highlight-box.emerald{background:var(--emerald-light);border:1px solid rgba(16,185,129,.15)}
+.highlight-box h5{font-size:13px;font-weight:700;margin-bottom:8px}
+.highlight-box.blue h5{color:var(--blue-dark)}
+.highlight-box.purple h5{color:var(--purple-dark)}
+.highlight-box.emerald h5{color:var(--emerald-dark)}
+.highlight-box ul{padding-left:0}
+.highlight-box li{font-size:14px;color:var(--text-secondary);padding:4px 0;position:relative;padding-left:18px}
+.highlight-box li::before{content:'•';position:absolute;left:0;font-weight:700}
+.highlight-box.blue li::before{color:var(--blue)}
+.highlight-box.purple li::before{color:var(--purple)}
+.highlight-box.emerald li::before{color:var(--emerald)}
+
+/* ===== Certificate ===== */
+.cert-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-light)}
+.cert-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--text-muted);margin-bottom:12px}
+.cert-card{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;
+  background:linear-gradient(135deg,#fefce8,#fffbeb);border:1px solid #fde68a;
+  border-radius:var(--radius)}
+.cert-icon{font-size:24px}
+.cert-info h6{font-size:14px;font-weight:700;color:#92400e}
+.cert-info span{font-size:12px;color:#a16207}
+.cert-link{display:inline-flex;align-items:center;gap:4px;margin-left:16px;
+  font-size:12px;font-weight:600;color:#b45309;transition:gap .2s}
+.cert-link:hover{gap:8px}
+
+/* ===== Skills ===== */
+.skills-grid{max-width:var(--max-width);margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.skill-category{background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);
+  padding:28px;box-shadow:var(--shadow-sm)}
+.skill-category h4{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.skill-pills{display:flex;flex-wrap:wrap;gap:8px}
+.skill-pill{padding:6px 14px;background:var(--bg);border:1px solid var(--border-light);
+  border-radius:100px;font-size:13px;font-weight:500;color:var(--text-secondary)}
+
+/* ===== Data Sources Placeholder ===== */
+.data-sources{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+.data-src-btn{padding:8px 16px;border:1px dashed var(--border);border-radius:100px;
+  font-size:12px;font-weight:600;color:var(--text-muted);
+  display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+.data-src-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.data-src-btn .icon{font-size:15px}
+
+/* ===== Footer ===== */
+.footer{padding:48px 24px;text-align:center;border-top:1px solid var(--border)}
+.footer-text{font-size:14px;color:var(--text-muted)}
+.footer-text strong{color:var(--text-secondary)}
+
+/* ===== Animations ===== */
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.delay-1{transition-delay:.1s}
+.delay-2{transition-delay:.2s}
+.delay-3{transition-delay:.3s}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hero{padding:100px 20px 60px;min-height:90vh}
+  .hero-stats{gap:24px}
+  .hero-stat-num{font-size:28px}
+  .section{padding:56px 20px}
+  .project-hero{padding:28px 24px 0}
+  .project-body{padding:24px}
+  .pipeline{flex-direction:column;align-items:stretch;gap:0}
+  .pipeline-step{display:flex;align-items:center;gap:12px;text-align:left;padding:8px 0}
+  .pipeline-step::after{top:auto;left:17px;bottom:-8px;width:1.5px;height:16px}
+  .pipeline-step:last-child::after{display:none}
+  .pipeline-dot{width:32px;height:32px;font-size:13px;margin:0}
+  .project-hero-text h3{font-size:19px}
+}
+
+/* Print */
+@media print{
+  .nav,.scroll-indicator,.hero-dots{display:none}
+  .hero{min-height:auto;padding:40px 0}
+  .section{padding:32px 0}
+  .project-card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Portfolio</a>
+    <div class="nav-links">
+      <a href="#projects">项目作品</a>
+      <a href="#skills">技能工具</a>
+      <a href="#about">关于我</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-content">
+    <div class="hero-badge">📊 数据分析作品集</div>
+    <h1>用数据<span class="accent">洞察规律</span>，以模型<span class="accent">驱动决策</span></h1>
+    <p class="hero-subtitle">
+      三个跨领域数据分析项目：从深度学习客流预测、到机器学习故障诊断、再到多源数据消费调研——覆盖预测建模、迁移学习与量化研究全链路。
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">跨领域项目</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">0.948</div>
+        <div class="hero-stat-label">最高 R²</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">1732+</div>
+        <div class="hero-stat-label">问卷样本量</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">三等奖</div>
+        <div class="hero-stat-label">华为杯研赛</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-mouse"></div>
+    向下浏览
+  </div>
+</section>
+
+<!-- ===== Projects ===== -->
+<section class="section" id="projects">
+  <div class="section-header fade-in">
+    <div class="section-label">Projects</div>
+    <h2 class="section-title">项目作品</h2>
+    <p class="section-desc">三个项目分别展示了深度学习预测建模、机器学习竞赛实战与多方法量化研究能力</p>
+  </div>
+
+  <!-- ========== Project 1: Metro ========== -->
+  <div class="project fade-in delay-1">
+    <div class="project-card">
+      <div class="project-hero">
+        <div class="project-icon blue">🚇</div>
+        <div class="project-hero-text">
+          <h3>基于多源数据融合与残差图卷积网络的成都市地铁短时客流预测</h3>
+          <p class="project-subtitle">课程研究报告 · 独立完成 · 52页</p>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-grid">
+          <div>
+            <div class="project-tags">
+              <span class="tag blue">深度学习</span><span class="tag blue">图卷积网络</span>
+              <span class="tag blue">Transformer</span><span class="tag blue">时空预测</span>
+              <span class="tag blue">多源数据融合</span>
+            </div>
+            <div class="desc-block">
+              <h4>🔍 研究问题</h4>
+              <p>如何精准预测城市轨道交通的短时客流？本研究以成都地铁为场景，融合AFC刷卡数据与18项环境因素，构建端到端深度学习预测模型。</p>
+            </div>
+            <div class="desc-block">
+              <h4>📊 数据规模</h4>
+              <p>成都地铁2023年4月26日—5月26日连续31天AFC数据，覆盖37个站点，融合气温、降水、AQI等18项外部特征。经5分钟区间增量转换与24步滑动窗口切分。</p>
+            </div>
+            <div class="highlight-box blue">
+              <h5>⭐ 核心创新：SeSTAR-Net 模型架构</h5>
+              <ul>
+                <li><strong>季节基线编码器</strong> — EMA滑动均值 + 昨日/上周同期客流 → 三层全连接输出周期基线，后续分支仅学习非线性残差</li>
+                <li><strong>空间编码器</strong> — 双分支 ResGCN 分别建模进出站，残差连接缓解过平滑</li>
+                <li><strong>时间编码器</strong> — Temporal Transformer 多头注意力，克服 LSTM 长程路径衰减</li>
+                <li><strong>外部编码器</strong> — MLP 压缩环境因子 → 四分支拼接融合预测</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value blue">0.948</div>
+                <div class="metric-label">R² 决定系数</div>
+                <div class="metric-sub">15min粒度+外部特征</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value blue">[0.940,</div>
+                <div class="metric-label">Bootstrap CI</div>
+                <div class="metric-sub">0.949] 置信区间</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value blue">173.7%</div>
+                <div class="metric-label">噪声鲁棒性</div>
+                <div class="metric-sub">σ=0.20时RMSE退化幅度</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value blue">6</div>
+                <div class="metric-label">配置组合</div>
+                <div class="metric-sub">3粒度×有无外部特征</div>
+              </div>
+            </div>
+            <div style="margin-top:20px">
+              <div class="desc-block">
+                <h4>🔬 实验设计</h4>
+                <p>全矩阵对比实验：3种基线 × 3种时间粒度 × 有无外部特征共6组配置。消融实验验证各模块贡献。Bootstrap重采样 + 蒙特卡洛Dropout + 高斯噪声注入三重鲁棒性检验。</p>
+              </div>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="pipeline-dot blue">1</div>
+                <div class="pipeline-label">AFC数据<br>+18项环境特征</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot blue">2</div>
+                <div class="pipeline-label">5min区间<br>+异常值处理</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot blue">3</div>
+                <div class="pipeline-label">37站点拓扑<br>+7维时间特征</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot blue">4</div>
+                <div class="pipeline-label">SeSTAR-Net<br>残差学习</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot blue">5</div>
+                <div class="pipeline-label">全矩阵评估<br>+三重鲁棒检验</div>
+              </div>
+            </div>
+            <div class="data-sources">
+              <span class="data-src-btn"><span class="icon">📄</span> 源数据</span>
+              <span class="data-src-btn"><span class="icon">💻</span> 源代码</span>
+              <span class="data-src-btn"><span class="icon">📋</span> 完整报告</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Project 2: Bearing ========== -->
+  <div class="project fade-in delay-2">
+    <div class="project-card">
+      <div class="project-hero">
+        <div class="project-icon purple">🚄</div>
+        <div class="project-hero-text">
+          <h3>高速列车轴承智能故障诊断</h3>
+          <p class="project-subtitle">"华为杯"第22届中国研究生数学建模竞赛 · 团队（3人） · 91页</p>
+          <div class="project-award">
+            <span>🏅</span> 国家级三等奖
+          </div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-grid">
+          <div>
+            <div class="project-tags">
+              <span class="tag purple">机器学习</span><span class="tag purple">迁移学习</span>
+              <span class="tag purple">故障诊断</span><span class="tag purple">XGBoost</span>
+              <span class="tag purple">SVM</span><span class="tag purple">DANN</span>
+            </div>
+            <div class="desc-block">
+              <h4>🔍 赛题背景</h4>
+              <p>轴承是高速列车的关键部件，长期处于高转速复杂工况下故障率极高。赛题要求利用台架实验数据（源域）训练模型，对实际列车数据（目标域）进行故障诊断，涉及跨工况的迁移学习挑战。</p>
+            </div>
+            <div class="desc-block">
+              <h4>🛠️ 特征工程</h4>
+              <p>从<strong>时域</strong>（均值、RMS、峭度、峰值因子、脉冲因子）、<strong>频域</strong>（频谱能量分布、频谱质心、均方频率）、<strong>时频域</strong>（小波包能量熵、希尔伯特包络谱、STFT时频图）三角度提取12维特征。统一采样率至32kHz，优先选用驱动端(DE)信号。</p>
+            </div>
+            <div class="highlight-box purple">
+              <h5>⭐ 迁移学习策略</h5>
+              <ul>
+                <li><strong>TCA-XGBoost</strong> — 迁移成分分析对齐源域与目标域分布 + XGBoost分类，最大置信度0.800</li>
+                <li><strong>DANN</strong> — 域对抗神经网络无监督迁移，MMD值快速平稳下降至0.112</li>
+                <li><strong>可解释性分析</strong> — 从特征分布轨迹、域差异量化、代表样本跟踪等五维度实现迁移过程可视化</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value purple">0.861</div>
+                <div class="metric-label">SVM F1-Score</div>
+                <div class="metric-sub">源域测试集</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value purple">0.859</div>
+                <div class="metric-label">随机森林 F1</div>
+                <div class="metric-sub">源域测试集</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value purple">0.112</div>
+                <div class="metric-label">DANN MMD</div>
+                <div class="metric-sub">域差异最终稳定值</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value purple">12</div>
+                <div class="metric-label">特征维度</div>
+                <div class="metric-sub">时域+频域+时频域</div>
+              </div>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="pipeline-dot purple">1</div>
+                <div class="pipeline-label">信号重采样<br>统一32kHz</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot purple">2</div>
+                <div class="pipeline-label">三域特征提取<br>12维向量</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot purple">3</div>
+                <div class="pipeline-label">SVM·XGB·RF<br>源域诊断</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot purple">4</div>
+                <div class="pipeline-label">TCA/DANN<br>跨域迁移</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-dot purple">5</div>
+                <div class="pipeline-label">五维可解释<br>迁移可视化</div>
+              </div>
+            </div>
+            <div class="cert-section">
+              <div class="cert-title">📜 获奖证书</div>
+              <div class="cert-card">
+                <span class="cert-icon">🏆</span>
+                <div class="cert-info">
+                  <h6>华为杯第22届中国研究生数学建模竞赛</h6>
+                  <span>国家级三等奖 · 2025年12月 · 证书编号 E2025301056</span>
+                </div>
+              </div>
+            </div>
+            <div class="data-sources">
+              <span class="data-src-btn"><span class="icon">📄</span> 源数据</span>
+              <span class="data-src-btn"><span class="icon">💻</span> 源代码</span>
+              <span class="data-src-btn"><span class="icon">📋</span> 完整报告</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Project 3: Ginseng ========== -->
+  <div class="project fade-in delay-3">
+    <div class="project-card">
+      <div class="project-hero">
+        <div class="project-icon emerald">🌿</div>
+        <div class="project-hero-text">
+          <h3>唤醒长白山——吉林人参品牌年轻化与"悦己"消费路径研究</h3>
+          <p class="project-subtitle">市场调研报告 · 团队项目 · 65页</p>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-grid">
+          <div>
+            <div class="project-tags">
+              <span class="tag emerald">市场调研</span><span class="tag emerald">结构方程模型</span>
+              <span class="tag emerald">K-Means聚类</span><span class="tag emerald">PSM定价</span>
+              <span class="tag emerald">文本挖掘</span><span class="tag emerald">Logistic回归</span>
+            </div>
+            <div class="desc-block">
+              <h4>🔍 研究背景</h4>
+              <p>吉林人参产量占全国六成以上，但品牌老化、产品形态单一，年轻消费群体渗透率偏低。如何推动人参从"药材柜台"走向"年轻人的购物车"？本研究通过多源数据融合分析框架提供系统性答案。</p>
+            </div>
+            <div class="desc-block">
+              <h4>📊 数据收集</h4>
+              <p><strong>文献调研</strong>：系统梳理产业升级、品牌年轻化与消费价值理论文献。<strong>问卷调查</strong>：分层配额抽样，回收1856份，有效1732份（有效率93.3%），30岁以下占67.3%。<strong>文本挖掘</strong>：小红书、抖音、微博采集5000+条有效文本，捕捉自然语境中的真实态度。</p>
+            </div>
+          </div>
+          <div>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value emerald">1,732</div>
+                <div class="metric-label">有效问卷</div>
+                <div class="metric-sub">全年龄段覆盖</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value emerald">5,000+</div>
+                <div class="metric-label">社媒文本</div>
+                <div class="metric-sub">三平台采集</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value emerald">4</div>
+                <div class="metric-label">消费圈层</div>
+                <div class="metric-sub">K-Means聚类识别</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value emerald">&gt;⅔</div>
+                <div class="metric-label">方差解释率</div>
+                <div class="metric-sub">三维价值→购买意愿</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full-width methodology & findings for this project -->
+        <div style="margin-top:28px">
+          <div class="pipeline">
+            <div class="pipeline-step">
+              <div class="pipeline-dot emerald">1</div>
+              <div class="pipeline-label">文献调研<br>+量表本土化</div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-dot emerald">2</div>
+              <div class="pipeline-label">1732份问卷<br>+5000条文本</div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-dot emerald">3</div>
+              <div class="pipeline-label">K-Means聚类<br>识别4大圈层</div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-dot emerald">4</div>
+              <div class="pipeline-label">SEM+PSM+<br>Logistic建模</div>
+            </div>
+            <div class="pipeline-step">
+              <div class="pipeline-dot emerald">5</div>
+              <div class="pipeline-label">6大对策<br>产品矩阵方案</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:28px">
+          <div class="highlight-box emerald">
+            <h5>🔬 七种分析方法联动</h5>
+            <ul>
+              <li><strong>K-Means聚类</strong> → 4大消费圈层：国潮文化派、颜值社交派、朋克养生党、实用主义派</li>
+              <li><strong>IPA模型</strong> → 便携性与功效感知为跨圈层通用底盘属性</li>
+              <li><strong>结构方程模型</strong> → 功能·情感·社交三维价值协同驱动，解释购买意愿超⅔方差</li>
+              <li><strong>PSM价格测试</strong> → 核心价格带与新茶饮高度重合，归入"日常轻养生消费品"心理账户</li>
+            </ul>
+          </div>
+          <div class="highlight-box emerald">
+            <h5>💡 六大核心发现</h5>
+            <ul>
+              <li><strong>"高认知、低转化"</strong> — 近九成知晓，仅半数购买，信任·体验·身份三重门槛</li>
+              <li><strong>圈层分化显著</strong> — 国潮文化派占比最大，兼具最高付费意愿与最强传播动能</li>
+              <li><strong>三维价值耦合</strong> — 功能价值是锚点，情感价值是放大器，社交价值是扩散器</li>
+              <li><strong>价格认知收敛</strong> — 可接受价格带与主流功能饮料高度重合</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="data-sources" style="margin-top:20px">
+          <span class="data-src-btn"><span class="icon">📄</span> 源数据</span>
+          <span class="data-src-btn"><span class="icon">💻</span> 源代码</span>
+          <span class="data-src-btn"><span class="icon">📋</span> 完整报告</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Skills ===== -->
+<section class="section" id="skills" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-header fade-in">
+    <div class="section-label">Skills &amp; Tools</div>
+    <h2 class="section-title">技能与工具</h2>
+    <p class="section-desc">覆盖数据分析全流程的技术栈</p>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-category fade-in delay-1">
+      <h4>🐍 编程与数据分析</h4>
+      <div class="skill-pills">
+        <span class="skill-pill">Python</span><span class="skill-pill">Pandas</span>
+        <span class="skill-pill">NumPy</span><span class="skill-pill">SciPy</span>
+        <span class="skill-pill">SQL</span><span class="skill-pill">R</span>
+        <span class="skill-pill">SPSS</span>
+      </div>
+    </div>
+    <div class="skill-category fade-in delay-1">
+      <h4>🧠 机器学习与深度学习</h4>
+      <div class="skill-pills">
+        <span class="skill-pill">PyTorch</span><span class="skill-pill">scikit-learn</span>
+        <span class="skill-pill">XGBoost</span><span class="skill-pill">GCN</span>
+        <span class="skill-pill">Transformer</span><span class="skill-pill">LSTM</span>
+        <span class="skill-pill">SVM</span><span class="skill-pill">迁移学习</span>
+      </div>
+    </div>
+    <div class="skill-category fade-in delay-2">
+      <h4>📊 可视化</h4>
+      <div class="skill-pills">
+        <span class="skill-pill">Matplotlib</span><span class="skill-pill">Seaborn</span>
+        <span class="skill-pill">t-SNE</span>
+        <span class="skill-pill">Plotly</span>
+        <span class="skill-pill">ECharts</span>
+      </div>
+    </div>
+    <div class="skill-category fade-in delay-2">
+      <h4>📋 调研与统计</h4>
+      <div class="skill-pills">
+        <span class="skill-pill">问卷设计</span><span class="skill-pill">文本挖掘</span>
+        <span class="skill-pill">结构方程模型</span><span class="skill-pill">K-Means</span>
+        <span class="skill-pill">PSM定价</span><span class="skill-pill">Logistic回归</span>
+        <span class="skill-pill">模糊综合评价</span>
+      </div>
+    </div>
+    <div class="skill-category fade-in delay-3">
+      <h4>🛠️ 工具与平台</h4>
+      <div class="skill-pills">
+        <span class="skill-pill">Git</span><span class="skill-pill">Jupyter</span>
+        <span class="skill-pill">VS Code</span><span class="skill-pill">LaTeX</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer" id="about">
+  <p class="footer-text">
+    <strong>邵麟涵</strong> · 长春理工大学 · 数据分析方向<br>
+    如需查看完整报告、源代码或源数据，欢迎联系<br><br>
+    <span style="color:var(--text-muted)">© 2026 个人作品集 · 持续更新中</span>
+  </p>
+</footer>
+
+<!-- ===== Scroll Animation ===== -->
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
