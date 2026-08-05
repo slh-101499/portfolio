@@ -1172,15 +1172,14 @@ function createParticle() {
     left:${Math.random()*100}vw;top:${100 + Math.random()*20}vh;
     animation-duration:${Math.random()*10+10}s;
     animation-delay:${Math.random()*4}s;
-    box-shadow:0 0 ${size*2}px ${size}px currentColor;
   `;
   document.body.appendChild(p);
   p.addEventListener('animationend', () => p.remove());
 }
 // Spawn particles periodically
-setInterval(() => { if (document.querySelectorAll('.particle').length < 25) createParticle(); }, 800);
+setInterval(() => { if (document.querySelectorAll('.particle').length < 15) createParticle(); }, 800);
 // Initial burst
-for (let i = 0; i < 10; i++) setTimeout(createParticle, i * 200);
+for (let i = 0; i < 8; i++) setTimeout(createParticle, i * 250);
 
 // ===== Button Ripple =====
 document.querySelectorAll('.btn').forEach(btn => {
