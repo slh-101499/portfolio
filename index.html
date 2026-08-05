@@ -312,6 +312,24 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
+/* ===== Mini Game ===== */
+.game-wrapper{max-width:500px;margin:0 auto;text-align:center;position:relative}
+.game-canvas{width:100%;height:360px;background:linear-gradient(180deg,#D6EAF8 0%,#E8F2FA 40%,#FAF7F2 100%);
+  border-radius:var(--radius-xl);border:1px solid var(--border-light);cursor:crosshair;
+  display:block;box-shadow:var(--shadow)}
+.game-hud{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:16px}
+.game-score{font-size:28px;font-weight:800;color:var(--sky-dark);font-family:var(--font-mono)}
+.game-score span{font-size:14px;font-weight:500;color:var(--text-muted)}
+.game-timer{font-size:28px;font-weight:800;color:var(--gold-dark);font-family:var(--font-mono)}
+.game-timer span{font-size:14px;font-weight:500;color:var(--text-muted)}
+.game-timer.urgent{color:#e74c3c;animation:pulse .5s ease-in-out infinite}
+.game-combo{font-size:16px;font-weight:700;color:var(--gold-dark);min-height:24px;transition:all .3s ease}
+.game-start-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;
+  font-size:18px;padding:16px 40px}
+.game-start-btn.hidden{display:none}
+.game-legend{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px;color:var(--text-muted);flex-wrap:wrap}
+@media(max-width:768px){.game-canvas{height:280px}}
+
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
 .hobbies-track{display:flex;gap:0;transition:transform .6s cubic-bezier(.25,.8,.25,1.2);will-change:transform}
@@ -527,6 +545,7 @@ ul{list-style:none}
       <a href="#projects">项目作品</a>
       <a href="#internship">实习经历</a>
       <a href="#skills">技能</a>
+      <a href="#game">小游戏</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -919,6 +938,27 @@ ul{list-style:none}
   </div>
 </section>
 
+<!-- ===== Game ===== -->
+<section class="section section-alt" id="game">
+  <div class="section-header reveal">
+    <div class="section-label">Play</div>
+    <h2 class="section-title">风能捕手 · 小游戏</h2>
+    <p class="section-desc">我在金风科技实习——来收集风能吧！⏱ 30秒挑战</p>
+  </div>
+  <div class="game-wrapper reveal reveal-delay-1">
+    <div class="game-hud">
+      <div class="game-score" id="gameScore">⚡ 0 <span>kWh</span></div>
+      <div class="game-timer" id="gameTimer">⏱ 30<span>s</span></div>
+      <div class="game-combo" id="gameCombo"></div>
+    </div>
+    <canvas id="gameCanvas" class="game-canvas"></canvas>
+    <button class="btn btn-primary game-start-btn" id="gameStartBtn" onclick="startGame()">🎮 开始游戏</button>
+    <div class="game-legend">
+      <span>🟦 +10 风能</span><span>🟨 +25 光能</span><span>🟩 +15 绿能</span><span>🟥 -5 故障</span>
+    </div>
+  </div>
+</section>
+
 <!-- ===== Hobbies ===== -->
 <section class="section" id="hobbies">
   <div class="section-header reveal">
@@ -1127,6 +1167,225 @@ skillCards.forEach(card => {
   const projectsEl = card.querySelector('.sc-projects');
   if (projectsEl) projectsEl.textContent = projects;
 });
+
+// ===== Mini Game =====
+let gameRunning = false;
+let gameScore = 0;
+let gameTime = 30;
+let gameTimer = null;
+let gameParticles = [];
+let gameCombo = 0;
+let gameMaxCombo = 0;
+const GAME_DURATION = 30;
+
+const gameCanvas = document.getElementById('gameCanvas');
+const gameCtx = gameCanvas.getContext('2d');
+const scoreEl = document.getElementById('gameScore');
+const timerEl = document.getElementById('gameTimer');
+const comboEl = document.getElementById('gameCombo');
+const startBtn = document.getElementById('gameStartBtn');
+
+function resizeGameCanvas() {
+  const rect = gameCanvas.parentElement.getBoundingClientRect();
+  const w = Math.min(rect.width - 4, 500);
+  gameCanvas.width = w * 2;
+  gameCanvas.height = 360 * 2;
+  gameCanvas.style.width = w + 'px';
+  gameCanvas.style.height = '360px';
+}
+resizeGameCanvas();
+window.addEventListener('resize', resizeGameCanvas);
+
+const GAME_COLORS = [
+  { color: '#7CB3E8', points: 10, label: '风能', emoji: '💨', size: 14 },
+  { color: '#D4A853', points: 25, label: '光能', emoji: '☀️', size: 18 },
+  { color: '#6B9B6F', points: 15, label: '绿能', emoji: '🌿', size: 14 },
+  { color: '#e74c3c', points: -5, label: '故障', emoji: '⚠️', size: 20 },
+];
+
+function spawnGameParticle() {
+  if (!gameRunning) return;
+  const r = Math.random();
+  let type;
+  if (r < .5) type = 0;       // 50% blue (wind)
+  else if (r < .75) type = 1;  // 25% gold (solar)
+  else if (r < .9) type = 2;   // 15% green
+  else type = 3;               // 10% red (fault)
+
+  const c = GAME_COLORS[type];
+  gameParticles.push({
+    x: Math.random() * (gameCanvas.width - 80) + 40,
+    y: -30,
+    vy: Math.random() * 1.2 + .6,
+    vx: (Math.random() - .5) * .4,
+    size: c.size,
+    color: c.color,
+    points: c.points,
+    label: c.label,
+    emoji: c.emoji,
+    wobble: Math.random() * Math.PI * 2
+  });
+
+  // Spawn next particle
+  const nextDelay = 600 + Math.random() * 700;
+  if (gameRunning) setTimeout(spawnGameParticle, nextDelay);
+}
+
+function startGame() {
+  gameScore = 0;
+  gameTime = GAME_DURATION;
+  gameParticles = [];
+  gameCombo = 0;
+  gameMaxCombo = 0;
+  gameRunning = true;
+  startBtn.classList.add('hidden');
+  updateGameHUD();
+  spawnGameParticle();
+  if (gameTimer) clearInterval(gameTimer);
+  gameTimer = setInterval(() => {
+    gameTime--;
+    updateGameHUD();
+    if (gameTime <= 0) endGame();
+  }, 1000);
+  gameLoop();
+}
+
+function endGame() {
+  gameRunning = false;
+  clearInterval(gameTimer);
+  startBtn.classList.remove('hidden');
+  startBtn.textContent = `🎮 再来一局 (${gameScore} kWh · 最大连击 ${gameMaxCombo})`;
+  comboEl.textContent = '';
+  // Clear remaining particles
+  gameParticles = [];
+}
+
+function updateGameHUD() {
+  scoreEl.innerHTML = `⚡ ${gameScore} <span>kWh</span>`;
+  timerEl.innerHTML = `⏱ ${gameTime}<span>s</span>`;
+  if (gameTime <= 8) timerEl.classList.add('urgent');
+  else timerEl.classList.remove('urgent');
+  comboEl.textContent = gameCombo > 1 ? `🔥 ${gameCombo}连击!` : '';
+}
+
+gameCanvas.addEventListener('click', (e) => {
+  if (!gameRunning) return;
+  const rect = gameCanvas.getBoundingClientRect();
+  const sx = gameCanvas.width / rect.width;
+  const sy = gameCanvas.height / parseFloat(gameCanvas.style.height);
+  const mx = (e.clientX - rect.left) * sx;
+  const my = (e.clientY - rect.top) * sy;
+
+  // Check collision with particles
+  let hit = false;
+  for (let i = gameParticles.length - 1; i >= 0; i--) {
+    const p = gameParticles[i];
+    const dx = mx - p.x;
+    const dy = my - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < p.size + 8) {
+      // Hit!
+      gameScore += p.points;
+      if (gameScore < 0) gameScore = 0;
+      if (p.points > 0) {
+        gameCombo++;
+        if (gameCombo > gameMaxCombo) gameMaxCombo = gameCombo;
+      } else {
+        gameCombo = 0;
+      }
+      // Pop effect
+      for (let j = 0; j < 4; j++) {
+        gameParticles.push({
+          x: p.x, y: p.y,
+          vx: (Math.random() - .5) * 3,
+          vy: (Math.random() - .5) * 3 - 1,
+          size: 3, color: p.color, points: 0, label: '', emoji: '', wobble: 0,
+          life: 15
+        });
+      }
+      gameParticles.splice(i, 1);
+      hit = true;
+      break;
+    }
+  }
+  if (!hit) { gameCombo = 0; }
+  updateGameHUD();
+});
+
+function gameLoop() {
+  if (!gameRunning && gameParticles.length === 0) return;
+
+  gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+  // Draw subtle ground
+  gameCtx.fillStyle = 'rgba(107,155,111,.06)';
+  gameCtx.fillRect(0, gameCanvas.height * .85, gameCanvas.width, gameCanvas.height * .15);
+
+  // Draw wind turbine silhouette
+  const cx = gameCanvas.width / 2;
+  const cy = gameCanvas.height * .82;
+  gameCtx.fillStyle = 'rgba(44,62,80,.06)';
+  gameCtx.fillRect(cx - 3, cy - 50, 6, 55);
+  // Blades
+  const bladeAngle = Date.now() * .001;
+  gameCtx.strokeStyle = 'rgba(44,62,80,.08)';
+  gameCtx.lineWidth = 2;
+  for (let i = 0; i < 3; i++) {
+    const angle = bladeAngle + i * Math.PI * 2 / 3;
+    gameCtx.beginPath();
+    gameCtx.moveTo(cx, cy - 50);
+    gameCtx.lineTo(cx + Math.cos(angle) * 40, cy - 50 + Math.sin(angle) * 40);
+    gameCtx.stroke();
+  }
+
+  // Update and draw particles
+  for (let i = gameParticles.length - 1; i >= 0; i--) {
+    const p = gameParticles[i];
+    if (p.life !== undefined) {
+      p.life--;
+      if (p.life <= 0) { gameParticles.splice(i, 1); continue; }
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= .92;
+      p.vy *= .92;
+      gameCtx.globalAlpha = p.life / 15;
+      gameCtx.beginPath();
+      gameCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      gameCtx.fillStyle = p.color;
+      gameCtx.fill();
+      gameCtx.globalAlpha = 1;
+      continue;
+    }
+
+    p.y += p.vy;
+    p.x += p.vx + Math.sin(p.wobble + Date.now() * .003) * .3;
+
+    // Remove if off bottom
+    if (p.y > gameCanvas.height + 40) {
+      gameParticles.splice(i, 1);
+      if (p.points > 0 && gameRunning) { gameCombo = 0; updateGameHUD(); }
+      continue;
+    }
+
+    // Draw particle
+    gameCtx.beginPath();
+    gameCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    gameCtx.fillStyle = p.color;
+    gameCtx.fill();
+    gameCtx.strokeStyle = 'rgba(255,255,255,.4)';
+    gameCtx.lineWidth = 1.5;
+    gameCtx.stroke();
+
+    // Draw emoji label
+    if (p.emoji) {
+      gameCtx.font = `${p.size}px sans-serif`;
+      gameCtx.textAlign = 'center';
+      gameCtx.fillText(p.emoji, p.x, p.y + p.size / 3);
+    }
+  }
+
+  requestAnimationFrame(gameLoop);
+}
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
