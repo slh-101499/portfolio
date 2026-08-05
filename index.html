@@ -1118,10 +1118,10 @@ const radarData = {
 const radarSvg = document.getElementById('radarChart');
 const tooltip = document.getElementById('radarTooltip');
 const polygon = document.getElementById('radarPolygon');
-const dots = radarSvg.querySelectorAll('.radar-dot');
+const radarDots = radarSvg.querySelectorAll('.radar-dot');
 
 // Animate polygon on hover
-dots.forEach(dot => {
+radarDots.forEach(dot => {
   dot.addEventListener('mouseenter', () => {
     const skill = dot.dataset.skill;
     const data = radarData[skill];
@@ -1339,11 +1339,8 @@ function animate() {
     // Draw particle
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fillStyle = p.color.replace(')', `,${p.opacity})`).replace('rgb', 'rgba');
-    if (p.color.startsWith('#')) {
-      ctx.globalAlpha = p.opacity;
-      ctx.fillStyle = p.color;
-    }
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = p.color;
     ctx.fill();
     ctx.globalAlpha = 1;
   }
