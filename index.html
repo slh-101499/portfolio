@@ -1261,7 +1261,7 @@ function createParticle(fromBottom = true) {
     y: fromBottom ? canvas.height + Math.random() * 40 : Math.random() * canvas.height,
     vx: (Math.random() - .5) * .4,
     vy: -(Math.random() * .6 + .3),
-    size: Math.random() * 5 + 3,
+    size: Math.random() * 3 + 2,
     color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
     opacity: Math.random() * .4 + .3
   });
