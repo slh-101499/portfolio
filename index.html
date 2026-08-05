@@ -1177,7 +1177,7 @@ function createParticle() {
   p.addEventListener('animationend', () => p.remove());
 }
 // Spawn particles periodically
-setInterval(() => { if (document.querySelectorAll('.particle').length < 15) createParticle(); }, 800);
+setInterval(() => { if (document.querySelectorAll('.particle').length < 15) createParticle(); }, 1200);
 // Initial burst
 for (let i = 0; i < 8; i++) setTimeout(createParticle, i * 250);
 
