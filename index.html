@@ -1164,22 +1164,23 @@ document.addEventListener('keydown', (e) => {
 function createParticle() {
   const p = document.createElement('div');
   p.className = 'particle';
-  const size = Math.random() * 4 + 2;
-  const colors = ['rgba(124,179,232,.5)','rgba(212,168,83,.4)','rgba(107,155,111,.35)','rgba(180,200,220,.4)'];
+  const size = Math.random() * 6 + 4;
+  const colors = ['rgba(124,179,232,.7)','rgba(212,168,83,.6)','rgba(107,155,111,.55)','rgba(150,190,230,.6)','rgba(200,170,120,.5)'];
   p.style.cssText = `
     width:${size}px;height:${size}px;
     background:${colors[Math.floor(Math.random()*colors.length)]};
     left:${Math.random()*100}vw;top:${100 + Math.random()*20}vh;
-    animation-duration:${Math.random()*8+8}s;
-    animation-delay:${Math.random()*3}s;
+    animation-duration:${Math.random()*10+10}s;
+    animation-delay:${Math.random()*4}s;
+    box-shadow:0 0 ${size*2}px ${size}px currentColor;
   `;
   document.body.appendChild(p);
   p.addEventListener('animationend', () => p.remove());
 }
 // Spawn particles periodically
-setInterval(() => { if (document.querySelectorAll('.particle').length < 15) createParticle(); }, 1200);
+setInterval(() => { if (document.querySelectorAll('.particle').length < 25) createParticle(); }, 800);
 // Initial burst
-for (let i = 0; i < 6; i++) setTimeout(createParticle, i * 300);
+for (let i = 0; i < 10; i++) setTimeout(createParticle, i * 200);
 
 // ===== Button Ripple =====
 document.querySelectorAll('.btn').forEach(btn => {
