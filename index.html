@@ -347,6 +347,19 @@ ul{list-style:none}
   .hobby-card img{height:240px}
 }
 
+/* ===== Radar Chart ===== */
+.radar-container{max-width:480px;margin:0 auto;position:relative}
+.radar-chart{width:100%;height:auto;display:block}
+.radar-dot{cursor:pointer;transition:r .25s ease}
+.radar-dot:hover{r:8}
+.radar-tooltip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);
+  font-size:13px;text-align:center;opacity:0;pointer-events:none;
+  transition:opacity .3s ease;white-space:nowrap;box-shadow:0 8px 24px rgba(44,62,80,.3)}
+.radar-tooltip.visible{opacity:1}
+.radar-tooltip .rt-title{font-weight:700;font-size:14px;margin-bottom:4px}
+.radar-tooltip .rt-projects{font-size:11px;color:rgba(255,255,255,.75)}
+
 /* ===== CTA Section ===== */
 .cta-section{background:linear-gradient(170deg,var(--sky-light),var(--gold-light));
   padding:72px 28px;text-align:center;border-top:1px solid var(--border-light)}
@@ -362,8 +375,7 @@ ul{list-style:none}
 .footer .contact-chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
 
 /* ===== Floating Particles ===== */
-.particle{position:fixed;pointer-events:none;z-index:0;border-radius:50%;
-  animation:floatUp linear forwards;opacity:0}
+.particle-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 @keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(0)}10%{opacity:.7}90%{opacity:.15}100%{opacity:0;transform:translateY(-120vh) scale(1.2)}}
 
 /* ===== Scroll Progress ===== */
@@ -844,45 +856,66 @@ ul{list-style:none}
   <div class="section-header reveal">
     <div class="section-label">Skills</div>
     <h2 class="section-title">专业技能</h2>
-    <p class="section-desc">覆盖数据全链路的技术栈</p>
+    <p class="section-desc">悬停雷达图查看项目关联</p>
   </div>
-  <div class="skills-container">
-    <div class="skills-group reveal reveal-delay-1">
-      <h4>🐍 编程与数据处理</h4>
-      <div class="skills-bubbles">
-        <span class="skill-bubble primary" data-tip="主力语言">Python</span><span class="skill-bubble primary" data-tip="统计分析">R</span>
+  <div class="radar-container reveal reveal-delay-1">
+    <svg viewBox="0 0 400 400" class="radar-chart" id="radarChart">
+      <!-- Background grid rings -->
+      <circle cx="200" cy="195" r="150" fill="none" stroke="var(--border)" stroke-width="1"/>
+      <circle cx="200" cy="195" r="112" fill="none" stroke="var(--border-light)" stroke-width=".8"/>
+      <circle cx="200" cy="195" r="75" fill="none" stroke="var(--border-light)" stroke-width=".8"/>
+      <circle cx="200" cy="195" r="37" fill="none" stroke="var(--border-light)" stroke-width=".8"/>
+
+      <!-- Axes -->
+      <line x1="200" y1="195" x2="200" y2="45" stroke="var(--border)" stroke-width="1"/>
+      <line x1="200" y1="195" x2="343" y2="112" stroke="var(--border)" stroke-width="1"/>
+      <line x1="200" y1="195" x2="343" y2="278" stroke="var(--border)" stroke-width="1"/>
+      <line x1="200" y1="195" x2="200" y2="345" stroke="var(--border)" stroke-width="1"/>
+      <line x1="200" y1="195" x2="57" y2="278" stroke="var(--border)" stroke-width="1"/>
+      <line x1="200" y1="195" x2="57" y2="112" stroke="var(--border)" stroke-width="1"/>
+
+      <!-- Data polygon -->
+      <polygon id="radarPolygon" fill="rgba(124,179,232,.2)" stroke="var(--sky)" stroke-width="2.5"
+        points="200,60 314,120 308,270 200,330 92,270 86,120"/>
+
+      <!-- Data points -->
+      <circle cx="200" cy="60" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="编程"/>
+      <circle cx="314" cy="120" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="ML"/>
+      <circle cx="308" cy="270" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="可视化"/>
+      <circle cx="200" cy="330" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="产品"/>
+      <circle cx="92" cy="270" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="数据"/>
+      <circle cx="86" cy="120" r="5" fill="var(--sky)" stroke="#fff" stroke-width="2" class="radar-dot" data-skill="AI"/>
+
+      <!-- Labels -->
+      <text x="200" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">编程</text>
+      <text x="355" y="115" text-anchor="start" font-size="12" font-weight="700" fill="var(--text)">ML / DL</text>
+      <text x="355" y="282" text-anchor="start" font-size="12" font-weight="700" fill="var(--text)">可视化</text>
+      <text x="200" y="368" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text)">产品思维</text>
+      <text x="25" y="282" text-anchor="end" font-size="12" font-weight="700" fill="var(--text)">数据处理</text>
+      <text x="25" y="115" text-anchor="end" font-size="12" font-weight="700" fill="var(--text)">AI & 新兴</text>
+    </svg>
+
+    <!-- Hover tooltip -->
+    <div class="radar-tooltip" id="radarTooltip">
+      <div class="rt-title"></div>
+      <div class="rt-projects"></div>
+    </div>
+  </div>
+
+  <!-- Compact skill tags -->
+  <div class="skills-container" style="margin-top:24px">
+    <div class="skills-group reveal reveal-delay-2" style="text-align:center">
+      <div class="skills-bubbles" style="justify-content:center">
+        <span class="skill-bubble primary" data-tip="主力语言">Python</span>
+        <span class="skill-bubble primary" data-tip="统计分析">R</span>
         <span class="skill-bubble primary" data-tip="熟练掌握">SQL</span>
-        <span class="skill-bubble primary" data-tip="数据处理">Pandas & NumPy</span>
-        <span class="skill-bubble primary" data-tip="数据库管理">DBeaver</span>
-        <span class="skill-bubble primary" data-tip="数据分析">Excel</span>
-      </div>
-    </div>
-    <div class="skills-group reveal reveal-delay-2">
-      <h4>🤖 机器学习与深度学习</h4>
-      <div class="skills-bubbles">
-        <span class="skill-bubble accent" data-tip="深度学习框架">PyTorch</span><span class="skill-bubble accent" data-tip="经典ML库">scikit-learn</span>
-        <span class="skill-bubble accent" data-tip="梯度提升">XGBoost</span><span class="skill-bubble accent" data-tip="支持向量机">SVM</span>
-        <span class="skill-bubble accent" data-tip="集成学习">随机森林</span><span class="skill-bubble accent" data-tip="时空建模">GCN</span>
-        <span class="skill-bubble accent" data-tip="注意力机制">Transformer</span><span class="skill-bubble accent" data-tip="域自适应">迁移学习</span>
-      </div>
-    </div>
-    <div class="skills-group reveal reveal-delay-3">
-      <h4>📊 可视化与工具</h4>
-      <div class="skills-bubbles">
-        <span class="skill-bubble secondary" data-tip="绑图库">Matplotlib</span><span class="skill-bubble secondary" data-tip="统计绑图">Seaborn</span>
-        <span class="skill-bubble secondary" data-tip="BI看板">FineBI</span><span class="skill-bubble secondary" data-tip="降维可视化">t-SNE</span>
-        <span class="skill-bubble secondary" data-tip="版本控制">Git</span><span class="skill-bubble secondary" data-tip="交互编程">Jupyter</span>
-        <span class="skill-bubble secondary" data-tip="编辑器">VS Code</span><span class="skill-bubble secondary" data-tip="排版">LaTeX</span>
-      </div>
-    </div>
-  </div>
-  <div class="skills-container" style="margin-top:28px">
-    <div class="skills-group reveal reveal-delay-3">
-      <h4>🤖 AI & 新兴技术</h4>
-      <div class="skills-bubbles">
+        <span class="skill-bubble accent" data-tip="深度学习">PyTorch</span>
+        <span class="skill-bubble accent" data-tip="梯度提升">XGBoost</span>
+        <span class="skill-bubble accent" data-tip="域自适应">迁移学习</span>
+        <span class="skill-bubble secondary" data-tip="BI看板">FineBI</span>
+        <span class="skill-bubble secondary" data-tip="版本控制">Git</span>
         <span class="skill-bubble accent" data-tip="AI辅助开发">Vibe Coding</span>
-        <span class="skill-bubble accent" data-tip="智能体应用">AI Agent</span>
-        <span class="skill-bubble accent" data-tip="大模型应用">LLM 应用</span>
+        <span class="skill-bubble accent" data-tip="智能体">AI Agent</span>
       </div>
     </div>
   </div>
@@ -1072,6 +1105,47 @@ document.querySelectorAll('.tilt-element').forEach(card => {
   });
 });
 
+// ===== Radar Chart =====
+const radarData = {
+  '编程': { level: 0.85, projects: '🚇 SeSTAR-Net 模型开发 · 🚄 特征提取脚本 · 💼 Python数据运维' },
+  'ML': { level: 0.78, projects: '🚇 ResGCN · Transformer · 🚄 XGBoost · SVM · DANN' },
+  '可视化': { level: 0.72, projects: '🚇 客流预测图表 · 🚄 t-SNE分析 · 💼 FineBI看板' },
+  '产品思维': { level: 0.65, projects: '💼 PRD文档 · 版本迭代 · 🌿 15条落地建议' },
+  '数据处理': { level: 0.9, projects: '🚇 AFC数据清洗 · 💼 SQL规则开发 · 🌿 问卷分析' },
+  'AI': { level: 0.6, projects: '🤖 Vibe Coding · AI Agent · LLM 应用探索' }
+};
+
+const radarSvg = document.getElementById('radarChart');
+const tooltip = document.getElementById('radarTooltip');
+const polygon = document.getElementById('radarPolygon');
+const dots = radarSvg.querySelectorAll('.radar-dot');
+
+// Animate polygon on hover
+dots.forEach(dot => {
+  dot.addEventListener('mouseenter', () => {
+    const skill = dot.dataset.skill;
+    const data = radarData[skill];
+    if (!data) return;
+
+    // Update tooltip
+    tooltip.querySelector('.rt-title').textContent = skill;
+    tooltip.querySelector('.rt-projects').textContent = data.projects;
+    tooltip.classList.add('visible');
+
+    // Pulse the polygon
+    polygon.style.transition = 'all .5s ease';
+    polygon.setAttribute('fill', 'rgba(124,179,232,.35)');
+    polygon.setAttribute('stroke-width', '3');
+  });
+
+  dot.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+    polygon.style.transition = 'all .5s ease';
+    polygon.setAttribute('fill', 'rgba(124,179,232,.2)');
+    polygon.setAttribute('stroke-width', '2.5');
+  });
+});
+
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
 const cards = track.querySelectorAll('.hobby-card');
@@ -1160,26 +1234,123 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ===== Floating Particles =====
-function createParticle() {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  const size = Math.random() * 6 + 4;
-  const colors = ['rgba(124,179,232,.7)','rgba(212,168,83,.6)','rgba(107,155,111,.55)','rgba(150,190,230,.6)','rgba(200,170,120,.5)'];
-  p.style.cssText = `
-    width:${size}px;height:${size}px;
-    background:${colors[Math.floor(Math.random()*colors.length)]};
-    left:${Math.random()*100}vw;top:${100 + Math.random()*20}vh;
-    animation-duration:${Math.random()*10+10}s;
-    animation-delay:${Math.random()*4}s;
-  `;
-  document.body.appendChild(p);
-  p.addEventListener('animationend', () => p.remove());
+// ===== Particle Connection Network =====
+const canvas = document.createElement('canvas');
+canvas.className = 'particle-canvas';
+document.body.appendChild(canvas);
+const ctx = canvas.getContext('2d');
+
+let particles = [];
+let mouse = { x: -1000, y: -1000 };
+const MAX_PARTICLES = 15;
+const CONNECT_DIST = 150;
+const MOUSE_RADIUS = 180;
+const PARTICLE_COLORS = ['#7CB3E8','#D4A853','#6B9B6F','#96BEE6','#C8AA78'];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-// Spawn particles periodically
-setInterval(() => { if (document.querySelectorAll('.particle').length < 15) createParticle(); }, 1200);
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function createParticle(fromBottom = true) {
+  if (particles.length >= MAX_PARTICLES) return;
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: fromBottom ? canvas.height + Math.random() * 40 : Math.random() * canvas.height,
+    vx: (Math.random() - .5) * .4,
+    vy: -(Math.random() * .6 + .3),
+    size: Math.random() * 5 + 3,
+    color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+    opacity: Math.random() * .4 + .3
+  });
+}
+
 // Initial burst
-for (let i = 0; i < 8; i++) setTimeout(createParticle, i * 250);
+for (let i = 0; i < 8; i++) setTimeout(() => createParticle(i < 5), i * 250);
+
+// Spawn new particles
+setInterval(() => { if (particles.length < MAX_PARTICLES) createParticle(); }, 1200);
+
+// Track mouse
+document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+document.addEventListener('mouseleave', () => { mouse.x = -1000; mouse.y = -1000; });
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Update & draw
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+
+    // Mouse attraction
+    const dx = mouse.x - p.x;
+    const dy = mouse.y - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < MOUSE_RADIUS && dist > 1) {
+      const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
+      p.vx += (dx / dist) * force * .03;
+      p.vy += (dy / dist) * force * .03;
+    }
+
+    // Damping
+    p.vx *= .995;
+    p.vy *= .995;
+
+    // Update position
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Remove if offscreen
+    if (p.y < -50 || p.x < -50 || p.x > canvas.width + 50) {
+      particles.splice(i, 1);
+      continue;
+    }
+
+    // Draw connections to nearby particles
+    for (let j = i + 1; j < particles.length; j++) {
+      const p2 = particles[j];
+      const cdx = p.x - p2.x;
+      const cdy = p.y - p2.y;
+      const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+      if (cdist < CONNECT_DIST) {
+        const alpha = (1 - cdist / CONNECT_DIST) * .18;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = `rgba(124,179,232,${alpha})`;
+        ctx.lineWidth = .8;
+        ctx.stroke();
+      }
+    }
+
+    // Draw connection to mouse
+    if (dist < MOUSE_RADIUS && dist > 1) {
+      const alpha = (1 - dist / MOUSE_RADIUS) * .25;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.strokeStyle = `rgba(212,168,83,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Draw particle
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color.replace(')', `,${p.opacity})`).replace('rgb', 'rgba');
+    if (p.color.startsWith('#')) {
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+    }
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  requestAnimationFrame(animate);
+}
+animate();
 
 // ===== Button Ripple =====
 document.querySelectorAll('.btn').forEach(btn => {
