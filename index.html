@@ -291,6 +291,10 @@ ul{list-style:none}
 .timeline-desc p{margin-bottom:6px}
 .timeline-desc strong{color:var(--navy)}
 .timeline-photo{width:100%;border-radius:var(--radius-sm);margin-bottom:14px;object-fit:cover;max-height:260px}
+.timeline-body-grid{display:grid;grid-template-columns:1fr 200px;gap:20px;align-items:start}
+@media(max-width:768px){.timeline-body-grid{grid-template-columns:1fr}.timeline-body-grid .timeline-photo{max-height:180px}}
+.highlight-num{font-weight:800;color:var(--sky-dark);background:var(--sky-light);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.highlight-key{font-weight:700;color:var(--navy);background:linear-gradient(180deg,transparent 60%,rgba(212,168,83,.25) 60%)}
 
 /* ===== Skills Bubbles ===== */
 .skills-container{max-width:var(--max-width);margin:0 auto}
@@ -511,7 +515,7 @@ ul{list-style:none}
   <div class="hero-bg-orb orb2"></div>
   <div class="hero-bg-orb orb3"></div>
   <div class="hero-content">
-    <img class="hero-avatar" src="个人照片.JPG" alt="邵麟涵">
+    <img class="hero-avatar" src="主页头像.JPG" alt="邵麟涵">
     <div class="hero-greeting">👋 你好，我是</div>
     <h1>邵麟涵 <span style="font-weight:400;font-size:.7em;color:var(--text-muted)">Liana</span> <span class="wave">👋</span></h1>
     <div class="hero-typewriter">
@@ -541,11 +545,11 @@ ul{list-style:none}
   <div class="section-header reveal">
     <div class="section-label">About Me</div>
     <h2 class="section-title">关于我</h2>
-    <p class="section-desc">用数据洞察规律，以模型驱动决策——积极阳光，保持热爱</p>
+    <p class="section-desc">不疾不徐，韧而向阳</p>
   </div>
   <div class="about-grid">
     <div class="about-photo-card reveal reveal-delay-1">
-      <img src="个人照片.JPG" alt="邵麟涵">
+      <img src="主页头像.JPG" alt="邵麟涵">
       <div class="about-photo-info">
         <h3>邵麟涵 · Liana</h3>
         <div class="role-tags">
@@ -569,7 +573,7 @@ ul{list-style:none}
           <div class="edu-item">
             <div class="edu-date">2020.09 - 2024.06</div>
             <div class="edu-school">温州大学 · 应用统计学 本科</div>
-            <div class="edu-degree">优秀毕业生 · 单项奖学金 · 优秀学生干部</div>
+            <div class="edu-degree">优秀毕业生 · 优秀学生干部 · 校级奖学金</div>
           </div>
         </div>
       </div>
@@ -587,8 +591,10 @@ ul{list-style:none}
         <div class="contact-row">
           <span class="contact-chip">📧 2685411940@qq.com</span>
           <span class="contact-chip">📱 19843161014</span>
-          <span class="contact-chip">🌐 英语 CET-6</span>
-          <span class="contact-chip">🗣 普通话二级甲等</span>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="role-tag" style="font-size:11px">🌐 英语 CET-6</span>
+          <span class="role-tag" style="font-size:11px">🗣 普通话二级甲等</span>
         </div>
       </div>
     </div>
@@ -612,7 +618,7 @@ ul{list-style:none}
         <div class="project-cover-badge">🏅 国家二等奖</div>
         <div class="project-cover-title">
           <h3>基于多源数据融合与残差图卷积网络的成都市地铁短时客流预测</h3>
-          <div class="project-subtitle">应用统计案例大赛作品 · 独立完成 · 52页</div>
+          <div class="project-subtitle">应用统计案例大赛作品 · 团队项目（项目负责人） · 52页</div>
         </div>
       </div>
       <div class="project-body">
@@ -641,7 +647,7 @@ ul{list-style:none}
               <div class="metric-card"><div class="metric-value blue">0.948</div><div class="metric-label">R²（15min+外部特征）</div></div>
               <div class="metric-card"><div class="metric-value blue">[0.940, 0.949]</div><div class="metric-label">Bootstrap 95% CI</div></div>
               <div class="metric-card"><div class="metric-value blue">173.7%</div><div class="metric-label">噪声鲁棒性</div></div>
-              <div class="metric-card"><div class="metric-value blue">6组</div><div class="metric-label">全矩阵实验配置</div></div>
+              <div class="metric-card"><div class="metric-value blue">6</div><div class="metric-label">全矩阵实验配置</div></div>
             </div>
             <div class="pipeline">
               <div class="pipeline-step"><div class="pipeline-dot blue">1</div><div class="pipeline-label">31天AFC<br>+18项环境</div></div>
@@ -699,7 +705,7 @@ ul{list-style:none}
               <div class="metric-card"><div class="metric-value gold">0.861</div><div class="metric-label">SVM F1-Score</div></div>
               <div class="metric-card"><div class="metric-value gold">0.859</div><div class="metric-label">随机森林 F1</div></div>
               <div class="metric-card"><div class="metric-value gold">0.112</div><div class="metric-label">DANN MMD</div></div>
-              <div class="metric-card"><div class="metric-value gold">12维</div><div class="metric-label">特征维度</div></div>
+              <div class="metric-card"><div class="metric-value gold">12</div><div class="metric-label">特征维度</div></div>
             </div>
             <div class="pipeline">
               <div class="pipeline-step"><div class="pipeline-dot gold">1</div><div class="pipeline-label">信号重采样<br>统一32kHz</div></div>
@@ -749,17 +755,17 @@ ul{list-style:none}
           </div>
           <div>
             <div class="metrics-grid">
-              <div class="metric-card"><div class="metric-value green">1,732</div><div class="metric-label">有效问卷</div></div>
-              <div class="metric-card"><div class="metric-value green">5,000+</div><div class="metric-label">社媒文本</div></div>
+              <div class="metric-card"><div class="metric-value green">1732</div><div class="metric-label">有效问卷</div></div>
+              <div class="metric-card"><div class="metric-value green">5000+</div><div class="metric-label">社媒文本</div></div>
               <div class="metric-card"><div class="metric-value green">4</div><div class="metric-label">消费圈层</div></div>
-              <div class="metric-card"><div class="metric-value green">&gt;⅔</div><div class="metric-label">方差解释率</div></div>
+              <div class="metric-card"><div class="metric-value green">67%+</div><div class="metric-label">方差解释率</div></div>
             </div>
           </div>
         </div>
         <div style="margin-top:20px">
           <div class="pipeline">
             <div class="pipeline-step"><div class="pipeline-dot green">1</div><div class="pipeline-label">文献调研<br>+量表本土化</div></div>
-            <div class="pipeline-step"><div class="pipeline-dot green">2</div><div class="pipeline-label">1732份问卷<br>+5000条文本</div></div>
+            <div class="pipeline-step"><div class="pipeline-dot green">2</div><div class="pipeline-label">1732份问卷<br>+5000+条文本</div></div>
             <div class="pipeline-step"><div class="pipeline-dot green">3</div><div class="pipeline-label">K-Means聚类<br>识别4大圈层</div></div>
             <div class="pipeline-step"><div class="pipeline-dot green">4</div><div class="pipeline-label">SEM+PSM+<br>Logistic建模</div></div>
             <div class="pipeline-step"><div class="pipeline-dot green">5</div><div class="pipeline-label">6大对策<br>产品矩阵方案</div></div>
@@ -809,10 +815,12 @@ ul{list-style:none}
         <div class="timeline-date">2026.05 — 至今</div>
         <div class="timeline-company">金风科技股份有限公司（北京）</div>
         <div class="timeline-role">工程服务部 · 数据分析实习生</div>
-        <img src="金风科技.jpg" alt="金风科技" class="timeline-photo">
-        <div class="timeline-desc">
-          <p><strong>风机故障预警AI模型数据治理与评估：</strong>负责7000+台机组核心大部件档案标准化治理，DBeaver数仓与FEMS运维平台双源数据清洗校验与跨系统一致性比对，区分5类数据匹配异常并推动IT修复底层表逻辑缺陷。核算预警准确率、工单逾期率、全场故障TOP5频次、雷达周度可利用率等核心指标，交叉校验AI预警输出与现场故障工单，量化误报/漏报偏差。搭建风机故障预警BI看板（FineBI），迭代标准化中英文故障分析报告，支撑海外风场15天周期预测性维护AI工具规模化落地。</p>
-          <p><strong>CES海外风电预算BI看板：</strong>负责金风国际7大区海外风电预算可视化，基于Doris分层数仓完成预算SQL开发，搭建多币种自动换算逻辑统一美元口径，完成多源异构财务数据治理与跨系统差异校验，独立交付FineBI预算看板。</p>
+        <div class="timeline-body-grid">
+          <div class="timeline-desc">
+            <p><strong>风机故障预警AI模型数据治理与评估：</strong>负责<span class="highlight-num">7000+</span>台机组核心大部件档案标准化治理，DBeaver数仓与FEMS运维平台双源数据清洗校验与跨系统一致性比对，区分<span class="highlight-num">5类</span>数据匹配异常并推动IT修复底层表逻辑缺陷。核算预警准确率、工单逾期率、全场故障TOP5频次、雷达周度可利用率等核心指标，交叉校验AI预警输出与现场故障工单，量化误报/漏报偏差。<span class="highlight-key">独立搭建风机故障预警BI看板（FineBI）</span>，迭代标准化中英文故障分析报告，支撑海外风场<span class="highlight-num">15天</span>周期预测性维护AI工具规模化落地。</p>
+            <p><strong>CES海外风电预算BI看板：</strong>负责金风国际<span class="highlight-num">7大区</span>海外风电预算可视化，基于Doris分层数仓完成预算SQL开发，搭建多币种自动换算逻辑统一美元口径，完成多源异构财务数据治理与跨系统差异校验，<span class="highlight-key">独立交付FineBI预算看板</span>。</p>
+          </div>
+          <img src="金风科技.jpg" alt="金风科技" class="timeline-photo" style="margin-bottom:0">
         </div>
       </div>
     </div>
@@ -822,9 +830,11 @@ ul{list-style:none}
         <div class="timeline-date">2026.03 — 2026.05</div>
         <div class="timeline-company">北京中测安华科技有限公司（国企）</div>
         <div class="timeline-role">产品运营部 · 数据运营实习生</div>
-        <img src="中测安华.jpg" alt="中测安华" class="timeline-photo">
-        <div class="timeline-desc">
-          <p><strong>聚合安全资讯APP 2.0→3.0版本迭代：</strong>面向全国政企定制安全资讯平台。开发Python脚本批量分区上传海外政经数据，基于PostgreSQL编写迭代各业务专题SQL筛选规则，新增无效信息过滤逻辑，每日校验前端展示数据。参与撰写产品功能手册与前后端对接PRD，配合研发完成3.0迭代需求落地。监控曝光、阅览、推送转化核心指标，分城市分析客户阅读偏好，反向优化筛选规则与内容供给。</p>
+        <div class="timeline-body-grid">
+          <div class="timeline-desc">
+            <p><strong>聚合安全资讯APP 2.0→3.0版本迭代：</strong>面向全国政企定制安全资讯平台。<span class="highlight-key">开发Python脚本批量分区上传海外政经数据</span>，基于PostgreSQL编写迭代各业务专题SQL筛选规则，新增无效信息过滤逻辑，每日校验前端展示数据。<span class="highlight-key">参与撰写产品功能手册与前后端对接PRD</span>，配合研发完成3.0迭代需求落地。监控<span class="highlight-num">曝光、阅览、推送转化</span>核心指标，分城市分析客户阅读偏好，反向优化筛选规则与内容供给。</p>
+          </div>
+          <img src="中测安华.jpg" alt="中测安华" class="timeline-photo" style="margin-bottom:0">
         </div>
       </div>
     </div>
@@ -865,6 +875,16 @@ ul{list-style:none}
         <span class="skill-bubble secondary" data-tip="BI看板">FineBI</span><span class="skill-bubble secondary" data-tip="降维可视化">t-SNE</span>
         <span class="skill-bubble secondary" data-tip="版本控制">Git</span><span class="skill-bubble secondary" data-tip="交互编程">Jupyter</span>
         <span class="skill-bubble secondary" data-tip="编辑器">VS Code</span><span class="skill-bubble secondary" data-tip="排版">LaTeX</span>
+      </div>
+    </div>
+  </div>
+  <div class="skills-container" style="margin-top:28px">
+    <div class="skills-group reveal reveal-delay-3">
+      <h4>🤖 AI & 新兴技术</h4>
+      <div class="skills-bubbles">
+        <span class="skill-bubble accent" data-tip="AI辅助开发">Vibe Coding</span>
+        <span class="skill-bubble accent" data-tip="智能体应用">AI Agent</span>
+        <span class="skill-bubble accent" data-tip="大模型应用">LLM 应用</span>
       </div>
     </div>
   </div>
@@ -964,8 +984,8 @@ window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.
 // ===== Typewriter Effect =====
 const phrases = [
   '用数据洞察规律，以模型驱动决策',
-  '积极阳光，保持热爱',
   '数据分析 · 商业分析 · 用户产品 · AI产品',
+  '在数据与产品之间，找到属于自己的答案',
   '探索数据背后的故事 ✨'
 ];
 let phraseIdx = 0, charIdx = 0, isDeleting = false;
