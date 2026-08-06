@@ -312,31 +312,32 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
-/* ===== Product Match Game ===== */
-.match-grid{max-width:700px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:600px){.match-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
-.match-card{aspect-ratio:1;perspective:800px;cursor:pointer}
-.match-card-inner{width:100%;height:100%;position:relative;transition:transform .5s cubic-bezier(.25,.8,.25,1.2);
-  transform-style:preserve-3d}
-.match-card.flipped .match-card-inner,.match-card.matched .match-card-inner{transform:rotateY(180deg)}
-.match-face{position:absolute;inset:0;border-radius:var(--radius);display:flex;align-items:center;
-  justify-content:center;backface-visibility:hidden;font-size:13px;font-weight:600;
-  text-align:center;padding:12px;line-height:1.4}
-.match-front{background:linear-gradient(135deg,var(--sky),var(--sky-dark));color:#fff;
-  font-size:30px;box-shadow:var(--shadow)}
-.match-back{background:var(--warm-white);border:2px solid var(--border);color:var(--navy);
-  transform:rotateY(180deg);box-shadow:var(--shadow-sm);flex-direction:column;gap:4px}
-.match-back .mb-emoji{font-size:28px}
-.match-back .mb-text{font-size:12px}
-.match-card.matched .match-back{border-color:var(--green);background:var(--green-light)}
-.match-hud{display:flex;justify-content:center;align-items:center;gap:32px;margin-bottom:20px;flex-wrap:wrap}
-.match-stat{text-align:center}
-.match-stat-val{font-size:32px;font-weight:800;font-family:var(--font-mono)}
-.match-stat-val.blue{color:var(--sky-dark)}
-.match-stat-lbl{font-size:12px;color:var(--text-muted);margin-top:2px}
-.match-message{text-align:center;font-size:15px;font-weight:600;color:var(--text-secondary);
-  min-height:28px;margin-top:16px;transition:all .3s ease}
-.match-message.win{color:var(--green);font-size:18px}
+/* ===== Pomodoro Timer ===== */
+.pomodoro-container{max-width:420px;margin:0 auto;text-align:center}
+.pomodoro-ring{position:relative;width:260px;height:260px;margin:0 auto 24px}
+.pomodoro-ring svg{transform:rotate(-90deg);width:100%;height:100%}
+.pomodoro-ring circle{fill:none;stroke-width:6}
+.pomodoro-bg{stroke:var(--border-light)}
+.pomodoro-progress{stroke:var(--sky);stroke-linecap:round;
+  transition:stroke-dashoffset .3s linear;animation:none}
+.pomodoro-progress.break-mode{stroke:var(--green)}
+.pomodoro-time{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center}
+.pomodoro-time .pt-min{font-size:56px;font-weight:800;color:var(--navy);font-family:var(--font-mono);
+  letter-spacing:-.03em;line-height:1}
+.pomodoro-time .pt-label{font-size:13px;color:var(--text-muted);margin-top:6px;font-weight:600}
+.pomodoro-time .pt-sessions{font-size:12px;color:var(--text-muted);margin-top:4px}
+.pomodoro-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.pomodoro-preset{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.pomodoro-preset button{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);
+  background:var(--warm-white);cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--text-secondary);transition:all .2s}
+.pomodoro-preset button.active{background:var(--sky-light);border-color:var(--sky);color:var(--sky-dark)}
+.pomodoro-preset button:hover{border-color:var(--sky)}
+.pomodoro-status{font-size:14px;font-weight:600;color:var(--text-muted);margin-top:18px;
+  min-height:22px;transition:all .3s ease}
+.pomodoro-status.working{color:var(--sky-dark)}
+.pomodoro-status.breaking{color:var(--green)}
 
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
@@ -553,7 +554,7 @@ ul{list-style:none}
       <a href="#projects">项目作品</a>
       <a href="#internship">实习经历</a>
       <a href="#skills">技能</a>
-      <a href="#game">小游戏</a>
+      <a href="#game">番茄钟</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -946,20 +947,35 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ===== Game ===== -->
+<!-- ===== Pomodoro ===== -->
 <section class="section section-alt" id="game">
   <div class="section-header reveal">
-    <div class="section-label">Play</div>
-    <h2 class="section-title">产品匹配挑战</h2>
-    <p class="section-desc">翻转卡片，将"用户需求"与"产品方案"配对——测试你的产品直觉</p>
+    <div class="section-label">Tool</div>
+    <h2 class="section-title">番茄钟</h2>
+    <p class="section-desc">一个轻巧的专注计时器——25分钟专注，5分钟休息</p>
   </div>
-  <div class="match-hud reveal reveal-delay-1">
-    <div class="match-stat"><div class="match-stat-val blue" id="matchTimer">0</div><div class="match-stat-lbl">⏱ 用时(秒)</div></div>
-    <div class="match-stat"><div class="match-stat-val blue" id="matchMoves">0</div><div class="match-stat-lbl">👆 翻牌次数</div></div>
-    <button class="btn btn-outline" onclick="resetMatch()" style="font-size:13px;padding:10px 22px">🔄 重新开始</button>
+  <div class="pomodoro-container reveal reveal-delay-1">
+    <div class="pomodoro-preset">
+      <button class="active" onclick="setPomodoroPreset(25)">25min</button>
+      <button onclick="setPomodoroPreset(45)">45min</button>
+      <button onclick="setPomodoroPreset(15)">15min</button>
+    </div>
+    <div class="pomodoro-ring">
+      <svg viewBox="0 0 260 260">
+        <circle class="pomodoro-bg" cx="130" cy="130" r="115"/>
+        <circle class="pomodoro-progress" id="pomodoroProgress" cx="130" cy="130" r="115"/>
+      </svg>
+      <div class="pomodoro-time">
+        <div class="pt-min"><span id="pomodoroMins">25</span>:<span id="pomodoroSecs">00</span></div>
+        <div class="pt-sessions" id="pomodoroSessionCount"></div>
+      </div>
+    </div>
+    <div class="pomodoro-controls">
+      <button class="btn btn-primary" id="pomodoroBtn" onclick="togglePomodoro()">▶ 开始</button>
+      <button class="btn btn-outline" onclick="resetPomodoro()">↺ 重置</button>
+    </div>
+    <div class="pomodoro-status" id="pomodoroStatus">准备专注</div>
   </div>
-  <div class="match-grid reveal reveal-delay-2" id="matchGrid"></div>
-  <div class="match-message reveal reveal-delay-2" id="matchMsg">匹配每个"用户需求"与对应的"产品方案"</div>
 </section>
 
 <!-- ===== Hobbies ===== -->
@@ -1171,127 +1187,124 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== Product Match Game =====
-const MATCH_PAIRS = [
-  { need: '用户需要实时监控\n风机运行状态', needEmoji: '🌬️', solution: '搭建FineBI\n故障预警看板', solEmoji: '📊' },
-  { need: '海外7大区需要\n多币种预算报表', needEmoji: '🌍', solution: 'Doris数仓SQL\n+自动换算逻辑', solEmoji: '🏗️' },
-  { need: '政企客户需要\n定制安全资讯平台', needEmoji: '🏛️', solution: 'APP 3.0迭代\n+Python数据运维', solEmoji: '📱' },
-  { need: '年轻人不了解\n人参的价值', needEmoji: '🌿', solution: '1732份问卷\n识别4大消费圈层', solEmoji: '🔍' },
-  { need: '地铁乘客流量\n波动难以预测', needEmoji: '🚇', solution: 'SeSTAR-Net模型\nR²达0.948', solEmoji: '🧠' },
-  { need: '轴承故障诊断\n跨工况难迁移', needEmoji: '🚄', solution: 'TCA+DANN\n域自适应迁移', solEmoji: '🔧' },
-];
+// ===== Pomodoro Timer =====
+const CIRCLE_R = 115;
+const CIRCLE_C = 260 / 2;
+const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_R;
 
-let matchCards = [];
-let matchFlipped = [];
-let matchMatched = 0;
-let matchMoves = 0;
-let matchLocked = false;
-let matchStartTime = 0;
-let matchTimerInterval = null;
+const pomodoroCircle = document.getElementById('pomodoroProgress');
+pomodoroCircle.style.strokeDasharray = CIRCUMFERENCE;
+pomodoroCircle.style.strokeDashoffset = '0';
 
-function shuffleMatch() {
-  const cards = [];
-  MATCH_PAIRS.forEach((pair, i) => {
-    cards.push({ id: i, type: 'need', text: pair.need, emoji: pair.needEmoji, pairId: i });
-    cards.push({ id: i, type: 'solution', text: pair.solution, emoji: pair.solEmoji, pairId: i });
+let pomodoroRunning = false;
+let pomodoroTimeLeft = 25 * 60;
+let pomodoroTotal = 25 * 60;
+let pomodoroInterval = null;
+let pomodoroIsBreak = false;
+let pomodoroSessionCount = 0;
+
+function setPomodoroPreset(mins) {
+  if (pomodoroRunning) return;
+  pomodoroTimeLeft = mins * 60;
+  pomodoroTotal = mins * 60;
+  pomodoroIsBreak = false;
+  pomodoroCircle.classList.remove('break-mode');
+  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
+  document.getElementById('pomodoroStatus').textContent = '准备专注';
+  updatePomodoroDisplay();
+  document.querySelectorAll('.pomodoro-preset button').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === `${mins}min`);
   });
-  for (let i = cards.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [cards[i], cards[j]] = [cards[j], cards[i]];
+  updatePomodoroRing();
+}
+
+function togglePomodoro() {
+  if (pomodoroRunning) {
+    pausePomodoro();
+  } else {
+    startPomodoro();
   }
-  return cards;
 }
 
-function resetMatch() {
-  matchCards = shuffleMatch();
-  matchFlipped = [];
-  matchMatched = 0;
-  matchMoves = 0;
-  matchLocked = false;
-  matchStartTime = Date.now();
-  clearInterval(matchTimerInterval);
-  updateMatchHUD();
-  document.getElementById('matchMsg').textContent = '匹配每个"用户需求"与对应的"产品方案"';
-  document.getElementById('matchMsg').classList.remove('win');
-  renderMatchCards();
-  matchTimerInterval = setInterval(updateMatchHUD, 200);
-}
+function startPomodoro() {
+  pomodoroRunning = true;
+  document.getElementById('pomodoroBtn').textContent = '⏸ 暂停';
+  const statusEl = document.getElementById('pomodoroStatus');
+  statusEl.textContent = pomodoroIsBreak ? '放松一下 ☕' : '专注中...';
+  statusEl.className = 'pomodoro-status ' + (pomodoroIsBreak ? 'breaking' : 'working');
 
-function updateMatchHUD() {
-  document.getElementById('matchMoves').textContent = matchMoves;
-  const elapsed = Math.floor((Date.now() - matchStartTime) / 1000);
-  document.getElementById('matchTimer').textContent = elapsed;
-}
+  pomodoroInterval = setInterval(() => {
+    pomodoroTimeLeft--;
+    updatePomodoroDisplay();
+    updatePomodoroRing();
 
-function renderMatchCards() {
-  const grid = document.getElementById('matchGrid');
-  grid.innerHTML = matchCards.map((c, idx) => `
-    <div class="match-card ${c.matched ? 'matched' : ''} ${matchFlipped.includes(idx) || c.matched ? 'flipped' : ''}"
-         onclick="flipMatchCard(${idx})" data-idx="${idx}">
-      <div class="match-card-inner">
-        <div class="match-face match-front">?</div>
-        <div class="match-face match-back">
-          <span class="mb-emoji">${c.emoji}</span>
-          <span class="mb-text">${c.text.replace(/\n/g, '<br>')}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+    if (pomodoroTimeLeft <= 0) {
+      clearInterval(pomodoroInterval);
+      pomodoroRunning = false;
+      document.getElementById('pomodoroBtn').textContent = '▶ 开始';
 
-function flipMatchCard(idx) {
-  if (matchLocked) return;
-  const card = matchCards[idx];
-  if (card.matched) return;
-  if (matchFlipped.includes(idx)) return;
-
-  matchFlipped.push(idx);
-  const cardEl = document.querySelector(`.match-card[data-idx="${idx}"]`);
-  if (cardEl) cardEl.classList.add('flipped');
-
-  if (matchFlipped.length === 2) {
-    matchMoves++;
-    matchLocked = true;
-    const [a, b] = matchFlipped;
-    const cardA = matchCards[a];
-    const cardB = matchCards[b];
-
-    if (cardA.pairId === cardB.pairId && cardA.type !== cardB.type) {
-      // Match!
-      matchMatched++;
-      matchCards[a].matched = true;
-      matchCards[b].matched = true;
-      setTimeout(() => {
-        document.querySelector(`.match-card[data-idx="${a}"]`)?.classList.add('matched');
-        document.querySelector(`.match-card[data-idx="${b}"]`)?.classList.add('matched');
-      }, 400);
-      matchFlipped = [];
-      matchLocked = false;
-      updateMatchHUD();
-
-      if (matchMatched === MATCH_PAIRS.length) {
-        clearInterval(matchTimerInterval);
-        const elapsed = Math.floor((Date.now() - matchStartTime) / 1000);
-        const msg = document.getElementById('matchMsg');
-        msg.textContent = `🎉 全部匹配！${matchMoves}步 / ${elapsed}秒 —— 优秀的产品思维！`;
-        msg.classList.add('win');
+      if (!pomodoroIsBreak) {
+        // Work session complete → start break
+        pomodoroSessionCount++;
+        pomodoroTimeLeft = 5 * 60;
+        pomodoroTotal = 5 * 60;
+        pomodoroIsBreak = true;
+        pomodoroCircle.classList.add('break-mode');
+        document.getElementById('pomodoroStatus').textContent = '✅ 专注完成！休息一下吧';
+        document.getElementById('pomodoroStatus').className = 'pomodoro-status breaking';
+      } else {
+        // Break complete → reset
+        pomodoroTimeLeft = 25 * 60;
+        pomodoroTotal = 25 * 60;
+        pomodoroIsBreak = false;
+        pomodoroCircle.classList.remove('break-mode');
+        document.getElementById('pomodoroStatus').textContent = '☕ 休息结束，开始新的番茄';
+        document.getElementById('pomodoroStatus').className = 'pomodoro-status';
       }
-    } else {
-      // No match
-      setTimeout(() => {
-        matchFlipped.forEach(i => {
-          const el = document.querySelector(`.match-card[data-idx="${i}"]`);
-          if (el) el.classList.remove('flipped');
-        });
-        matchFlipped = [];
-        matchLocked = false;
-      }, 800);
+      updatePomodoroDisplay();
+      updatePomodoroRing();
     }
-  }
+  }, 1000);
 }
 
-// Initialize
-resetMatch();
+function pausePomodoro() {
+  pomodoroRunning = false;
+  clearInterval(pomodoroInterval);
+  document.getElementById('pomodoroBtn').textContent = '▶ 继续';
+  document.getElementById('pomodoroStatus').textContent = '已暂停';
+  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
+}
+
+function resetPomodoro() {
+  pomodoroRunning = false;
+  clearInterval(pomodoroInterval);
+  pomodoroIsBreak = false;
+  pomodoroSessionCount = 0;
+  pomodoroTimeLeft = 25 * 60;
+  pomodoroTotal = 25 * 60;
+  pomodoroCircle.classList.remove('break-mode');
+  document.getElementById('pomodoroBtn').textContent = '▶ 开始';
+  document.getElementById('pomodoroStatus').textContent = '准备专注';
+  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
+  updatePomodoroDisplay();
+  updatePomodoroRing();
+  document.querySelectorAll('.pomodoro-preset button').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === '25min');
+  });
+}
+
+function updatePomodoroDisplay() {
+  const mins = Math.floor(pomodoroTimeLeft / 60);
+  const secs = pomodoroTimeLeft % 60;
+  document.getElementById('pomodoroMins').textContent = String(mins).padStart(2, '0');
+  document.getElementById('pomodoroSecs').textContent = String(secs).padStart(2, '0');
+  document.getElementById('pomodoroSessionCount').textContent = pomodoroSessionCount > 0 ? `🍅 × ${pomodoroSessionCount}` : (pomodoroIsBreak ? '☕ 休息' : '专注');
+}
+
+function updatePomodoroRing() {
+  const offset = CIRCUMFERENCE * (1 - pomodoroTimeLeft / pomodoroTotal);
+  pomodoroCircle.style.strokeDashoffset = offset;
+}
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
