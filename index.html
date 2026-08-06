@@ -1193,7 +1193,7 @@ function generateFlowerClusters() {
     for (let j = 0; j < count; j++) {
       flowerClusters.push({
         angle: angle + (Math.random() - 0.5) * 0.06,
-        offsetR: (Math.random() - 0.5) * 55, // inside or outside the trace circle
+        offsetR: (Math.random() - 0.5) * 70, // inside or outside the trace circle
         size: 0.45 + Math.random() * 0.55,  // varied small sizes
         bloom: 0,
         phase: Math.random() * Math.PI * 2,
@@ -1408,7 +1408,7 @@ function drawFlowerClusters() {
     clockCtx.rotate(sway);
     clockCtx.scale(breathe * f.bloom, breathe * f.bloom);
 
-    const fs = 4.5 * f.size;  // small flowers
+    const fs = 7 * f.size;
 
     // 5 rounded petals
     for (let p = 0; p < 5; p++) {
