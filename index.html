@@ -315,38 +315,20 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
-/* ===== Growth Vine ===== */
-.vine-wrapper{max-width:560px;margin:0 auto;text-align:center}
-.vine-canvas{width:100%;height:420px;border-radius:var(--radius-xl);
-  background:linear-gradient(180deg,#E8F2FA 0%,#F5F0E8 70%,#E8D5C0 100%);
-  display:block;box-shadow:var(--shadow);cursor:default}
-@media(max-width:600px){.vine-canvas{height:340px}}
-.vine-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
-.vine-btn{padding:12px 22px;border-radius:100px;border:2px solid var(--border);
-  background:var(--warm-white);cursor:pointer;font-size:14px;font-weight:700;
-  color:var(--text-secondary);transition:all .3s ease;position:relative;overflow:hidden}
-.vine-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.vine-btn:active{transform:scale(.95)}
-.vine-btn.water{border-color:#7CB3E8;color:#5A8FBF}
-.vine-btn.water:hover{background:#E8F2FA;box-shadow:0 6px 20px rgba(124,179,232,.25)}
-.vine-btn.sun{border-color:#D4A853;color:#B8933A}
-.vine-btn.sun:hover{background:#FBF3E4;box-shadow:0 6px 20px rgba(212,168,83,.25)}
-.vine-btn.nutrient{border-color:#6B9B6F;color:#4A7A4E}
-.vine-btn.nutrient:hover{background:#EDF5EE;box-shadow:0 6px 20px rgba(107,155,111,.25)}
-.vine-btn.mentor{border-color:#C07080;color:#A05060}
-.vine-btn.mentor:hover{background:#FDF0F3;box-shadow:0 6px 20px rgba(192,112,128,.25)}
-.vine-btn .vb-icon{font-size:20px;margin-right:4px}
-.vine-btn .vb-cooldown{position:absolute;bottom:0;left:0;height:3px;
-  background:currentColor;opacity:.3;transition:width .1s linear;border-radius:0 0 100px 100px}
-.vine-message{font-size:16px;font-weight:600;color:var(--text-secondary);min-height:28px;
-  margin:6px 0;transition:all .5s ease}
-.vine-message.highlight{color:var(--sky-dark);animation:msgPop .6s ease}
-@keyframes msgPop{0%{transform:scale(.9);opacity:.5}50%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
-.vine-meter{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
-.vine-meter-bar{width:200px;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
-.vine-meter-fill{height:100%;background:linear-gradient(90deg,#7CB3E8,#6B9B6F,#D4A853);border-radius:3px;
-  transition:width .8s cubic-bezier(.25,.8,.25,1.2)}
-.vine-meter-text{font-size:12px;font-weight:700;color:var(--text-muted)}
+/* ===== p5.js Tree Bloom ===== */
+.tree-wrapper{max-width:600px;margin:0 auto;text-align:center}
+.tree-canvas-container{border-radius:var(--radius-xl);overflow:hidden;
+  box-shadow:var(--shadow-lg);background:#FAF7F2;line-height:0}
+.tree-canvas-container canvas{display:block;width:100%!important;height:auto!important}
+.tree-message{font-size:15px;font-weight:600;color:var(--text-secondary);min-height:26px;
+  margin-top:12px;transition:all .5s ease}
+.tree-message.highlight{color:var(--sky-dark);animation:msgPop .6s ease}
+.tree-btn-wrap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.tree-btn{padding:12px 24px;border-radius:100px;border:2px solid #7CB3E8;
+  background:#E8F2FA;cursor:pointer;font-size:14px;font-weight:700;color:#5A8FBF;
+  transition:all .3s ease}
+.tree-btn:hover{background:#D0E8F8;transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,179,232,.25)}
+.tree-btn:active{transform:scale(.95)}
 
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
@@ -566,7 +548,7 @@ ul{list-style:none}
       <a href="#projects">项目</a>
       <a href="#internship">实习</a>
       <a href="#skills">技能</a>
-      <a href="#game">成长</a>
+      <a href="#game">枯木逢春</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -959,34 +941,18 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ===== Growth Vine ===== -->
+<!-- ===== Tree Bloom ===== -->
 <section class="section section-alt" id="game">
   <div class="section-header reveal">
     <div class="section-label">Grow</div>
-    <h2 class="section-title">成长藤蔓</h2>
-    <p class="section-desc">每一次浇灌、每一缕阳光、每一位伯乐，都让你更加茁壮</p>
+    <h2 class="section-title">枯木逢春</h2>
+    <p class="section-desc">每一次浇灌都是成长，每一次等待终将绽放</p>
   </div>
-  <div class="vine-wrapper reveal reveal-delay-1">
-    <canvas class="vine-canvas" id="vineCanvas" width="1120" height="840"></canvas>
-    <div class="vine-message" id="vineMessage">🌰 一颗种子，埋下希望</div>
-    <div class="vine-meter">
-      <span style="font-size:13px">🌱</span>
-      <div class="vine-meter-bar"><div class="vine-meter-fill" id="vineMeterFill" style="width:3%"></div></div>
-      <span class="vine-meter-text" id="vineMeterText">3%</span>
-    </div>
-    <div class="vine-actions" id="vineActions">
-      <button class="vine-btn water" onclick="vineAction('water')">
-        <span class="vb-icon">💧</span> 浇水
-      </button>
-      <button class="vine-btn sun" onclick="vineAction('sun')">
-        <span class="vb-icon">☀️</span> 阳光
-      </button>
-      <button class="vine-btn nutrient" onclick="vineAction('nutrient')">
-        <span class="vb-icon">🌱</span> 养分
-      </button>
-      <button class="vine-btn mentor" onclick="vineAction('mentor')">
-        <span class="vb-icon">🤝</span> 伯乐
-      </button>
+  <div class="tree-wrapper reveal reveal-delay-1">
+    <div class="tree-canvas-container" id="treeCanvasContainer"></div>
+    <div class="tree-message" id="treeMessage">🪵 一棵枯木，在等待一场甘霖</div>
+    <div class="tree-btn-wrap">
+      <button class="tree-btn" id="treeBtn" onclick="triggerWatering()">💧 浇灌</button>
     </div>
   </div>
 </section>
@@ -1200,348 +1166,446 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== Growth Vine =====
-const vineCanvas = document.getElementById('vineCanvas');
-const vineCtx = vineCanvas.getContext('2d');
-const VW = vineCanvas.width;
-const VH = vineCanvas.height;
+// ===== p5.js Tree Bloom =====
+(function(){
+  const container = document.getElementById('treeCanvasContainer');
+  const msgEl = document.getElementById('treeMessage');
+  const btnEl = document.getElementById('treeBtn');
 
-let vineGrowth = 3; // 0-100
-let vineLeaves = [];
-let vineBranches = [];
-let vineFlowers = [];
-let vineParticles = [];
-let vineTime = 0;
-let vineCooldowns = { water: 0, sun: 0, nutrient: 0, mentor: 0 };
+  // Load p5 dynamically
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js';
+  script.onload = () => {
+    new p5((p) => {
+      // ---- State Machine ----
+      const STATE = { IDLE: 0, WATERING: 1, GROWING: 2, BLOOMING: 3, DONE: 4 };
+      let state = STATE.IDLE;
+      let stateTimer = 0;
+      let globalTime = 0;
+      let wateringCan = null;
+      let particles = [];
+      let tree = null;
+      let vase = null;
+      let leaves = [];
+      let flowers = [];
+      let growProgress = 0; // 0 to 1
+      let bloomProgress = 0;
+      let btnCooldown = 0;
 
-const MILESTONES = [
-  { pct: 15, msg: '🌱 嫩芽破土，新的开始' },
-  { pct: 30, msg: '🌿 藤蔓初成，向阳而生' },
-  { pct: 50, msg: '🍃 枝叶舒展，不惧风雨' },
-  { pct: 70, msg: '🌺 含苞待放，静待花开' },
-  { pct: 90, msg: '🌸 繁花似锦，未来可期' },
-];
-let milestoneReached = new Set();
+      // ---- Vase Class ----
+      class Vase {
+        constructor(x, y) { this.x = x; this.y = y; }
+        draw() {
+          p.push();
+          p.translate(this.x, this.y);
+          // Shadow
+          p.noStroke();
+          p.fill(0, 0, 0, 15);
+          p.ellipse(0, 2, 62, 10);
+          // Body
+          p.fill(200, 160, 130);
+          p.stroke(160, 120, 90);
+          p.strokeWeight(1.5);
+          p.beginShape();
+          p.vertex(-22, -60); p.vertex(-28, -20);
+          p.bezierVertex(-35, 10, -30, 35, -20, 40);
+          p.vertex(20, 40);
+          p.bezierVertex(30, 35, 35, 10, 28, -20);
+          p.vertex(22, -60);
+          p.endShape(p.CLOSE);
+          // Rim
+          p.fill(210, 175, 145);
+          p.stroke(160, 120, 90);
+          p.ellipse(0, -60, 48, 12);
+          // Highlight
+          p.noStroke();
+          p.fill(255, 255, 255, 30);
+          p.ellipse(-8, -38, 8, 40);
+          p.fill(255, 255, 255, 15);
+          p.ellipse(-8, -10, 12, 35);
+          p.pop();
+        }
+      }
 
-const GROWTH_RATES = { water: 8, sun: 6, nutrient: 5, mentor: 12 };
-const COOLDOWNS = { water: 3000, sun: 2500, nutrient: 2000, mentor: 5000 };
+      // ---- Tree Class (procedural) ----
+      class Branch {
+        constructor(x, y, angle, length, depth) {
+          this.x = x; this.y = y;
+          this.angle = angle;
+          this.length = length;
+          this.depth = depth;
+          this.children = [];
+          this.swayOffset = p.random(1000);
+          if (depth > 0) {
+            const nBranches = depth > 2 ? p.floor(p.random(2, 4)) : 2;
+            for (let i = 0; i < nBranches; i++) {
+              const childAngle = angle + p.random(-0.7, 0.7);
+              const childLen = length * p.random(0.55, 0.78);
+              this.children.push(new Branch(0, 0, childAngle, childLen, depth - 1));
+            }
+          }
+        }
 
-function vineAction(type) {
-  if (vineCooldowns[type] > Date.now()) return;
-  if (vineGrowth >= 100) return;
+        getEndPos(parentX, parentY, parentAngle, t) {
+          const sway = p.sin(t * 0.8 + this.swayOffset) * (0.03 / (this.depth + 1));
+          const a = parentAngle + this.angle + sway;
+          return {
+            x: parentX + p.cos(a) * this.length,
+            y: parentY + p.sin(a) * this.length,
+            angle: a
+          };
+        }
 
-  vineCooldowns[type] = Date.now() + COOLDOWNS[type];
-  const btn = document.querySelector(`.vine-btn.${type}`);
-  const bar = document.createElement('div');
-  bar.className = 'vb-cooldown';
-  bar.style.width = '100%';
-  btn.appendChild(bar);
+        draw(parentX, parentY, parentAngle, t) {
+          const end = this.getEndPos(parentX, parentY, parentAngle, t);
+          const thickness = this.depth * 1.8 + 1.5;
+          p.stroke(90, 65, 40);
+          p.strokeWeight(thickness);
+          p.noFill();
+          p.beginShape();
+          p.vertex(parentX, parentY);
+          p.vertex(end.x, end.y);
+          p.endShape();
+          // Lighter highlight
+          p.stroke(120, 95, 65, 40);
+          p.strokeWeight(thickness * 0.5);
+          p.beginShape();
+          p.vertex(parentX + 1, parentY);
+          p.vertex(end.x + 1, end.y);
+          p.endShape();
 
-  const startTime = Date.now();
-  const duration = COOLDOWNS[type];
-  function updateBar() {
-    const elapsed = Date.now() - startTime;
-    const remaining = Math.max(0, 1 - elapsed / duration);
-    bar.style.width = (remaining * 100) + '%';
-    if (remaining > 0) requestAnimationFrame(updateBar);
-    else bar.remove();
-  }
-  requestAnimationFrame(updateBar);
+          for (const child of this.children) {
+            child.draw(end.x, end.y, end.angle, t);
+          }
+        }
 
-  vineGrowth = Math.min(100, vineGrowth + GROWTH_RATES[type]);
-  spawnGrowthParticles(type);
+        getBranchEndpoints(parentX, parentY, parentAngle, t, result = []) {
+          const end = this.getEndPos(parentX, parentY, parentAngle, t);
+          if (this.children.length === 0 || this.depth <= 1) {
+            result.push({ x: end.x, y: end.y, angle: end.angle, depth: this.depth });
+          }
+          for (const child of this.children) {
+            child.getBranchEndpoints(end.x, end.y, end.angle, t, result);
+          }
+          return result;
+        }
+      }
 
-  // Spawn leaves/branches/flowers based on growth
-  if (vineGrowth > 10 && Math.random() < .7) addLeaf();
-  if (vineGrowth > 30 && Math.random() < .4) addBranch();
-  if (vineGrowth > 60 && Math.random() < .5) addFlower();
+      // ---- WateringCan Class ----
+      class WateringCan {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = -80; this.y = p.height * 0.3;
+          this.targetX = p.width * 0.25; this.targetY = p.height * 0.35;
+          this.angle = 0;
+          this.phase = 'enter'; // enter, pour, leave
+          this.phaseTimer = 0;
+          this.waterSpawnTimer = 0;
+        }
+        update(dt) {
+          this.phaseTimer += dt;
+          const t = this.phaseTimer;
+          if (this.phase === 'enter') {
+            const progress = p.min(t / 1.2, 1);
+            const eased = 1 - p.pow(1 - progress, 3);
+            this.x = p.lerp(-80, this.targetX, eased);
+            this.y = p.lerp(p.height * 0.3, this.targetY, eased);
+            this.angle = p.lerp(0, p.PI * 0.12, eased);
+            if (progress >= 1) { this.phase = 'pour'; this.phaseTimer = 0; }
+          } else if (this.phase === 'pour') {
+            this.angle = p.PI * 0.12 + p.sin(t * 4) * 0.04;
+            this.waterSpawnTimer += dt;
+            if (this.waterSpawnTimer > 0.03) {
+              this.waterSpawnTimer = 0;
+              const spoutX = this.x + p.cos(this.angle - 0.5) * 35;
+              const spoutY = this.y + p.sin(this.angle - 0.5) * 35 - 20;
+              particles.push(new WaterDrop(spoutX, spoutY));
+            }
+            if (t > 2.5) { this.phase = 'leave'; this.phaseTimer = 0; }
+          } else if (this.phase === 'leave') {
+            const progress = p.min(t / 1.0, 1);
+            const eased = 1 - p.pow(1 - progress, 3);
+            this.x = p.lerp(this.targetX, p.width + 80, eased);
+            this.y = p.lerp(this.targetY, p.height * 0.2, eased);
+            this.angle = p.lerp(p.PI * 0.12, -p.PI * 0.1, eased);
+            if (progress >= 1) { return false; }
+          }
+          return true;
+        }
+        draw() {
+          p.push();
+          p.translate(this.x, this.y);
+          p.rotate(this.angle);
+          // Shadow
+          p.noStroke();
+          p.fill(0, 0, 0, 10);
+          p.ellipse(4, 6, 55, 12);
+          // Body
+          p.fill(200, 150, 120);
+          p.stroke(150, 110, 80);
+          p.strokeWeight(1.5);
+          p.beginShape();
+          p.vertex(-20, -15); p.vertex(-25, 5);
+          p.bezierVertex(-28, 18, -22, 25, -15, 25);
+          p.vertex(18, 25);
+          p.bezierVertex(25, 25, 28, 18, 25, 5);
+          p.vertex(20, -15);
+          p.endShape(p.CLOSE);
+          // Highlight
+          p.noStroke();
+          p.fill(255, 255, 255, 30);
+          p.ellipse(-8, 0, 8, 35);
+          // Handle
+          p.noFill();
+          p.stroke(150, 110, 80);
+          p.strokeWeight(3);
+          p.arc(-5, -5, 28, 26, -p.PI * 0.8, p.PI * 0.7);
+          // Spout
+          p.stroke(150, 110, 80);
+          p.strokeWeight(3);
+          p.noFill();
+          p.beginShape();
+          p.vertex(15, -18); p.vertex(25, -30); p.vertex(33, -38);
+          p.endShape();
+          p.strokeWeight(2);
+          p.beginShape();
+          p.vertex(12, -15); p.vertex(22, -27); p.vertex(30, -35);
+          p.endShape();
+          p.pop();
+        }
+      }
 
-  updateVineDisplay();
-  checkMilestones();
-}
+      // ---- WaterDrop ----
+      class WaterDrop {
+        constructor(x, y) {
+          this.x = x + p.random(-4, 4);
+          this.y = y + p.random(-2, 2);
+          this.vy = p.random(1.5, 3);
+          this.vx = p.random(-0.5, 0.5);
+          this.life = 1;
+          this.size = p.random(2, 4);
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.05;
+          this.life -= 0.008;
+          return this.life > 0 && this.y < p.height * 0.78;
+        }
+        draw() {
+          p.noStroke();
+          p.fill(100, 170, 220, this.life * 200);
+          p.ellipse(this.x, this.y, this.size, this.size * 1.4);
+        }
+      }
 
-function spawnGrowthParticles(type) {
-  const colors = { water: ['#7CB3E8','#A8D0F0','#fff'], sun: ['#D4A853','#F0D878','#FFF8DC'], nutrient: ['#6B9B6F','#90C090','#C8E8C0'], mentor: ['#E8A0B0','#F0C0D0','#FFF0F5'] };
-  const cols = colors[type];
-  for (let i = 0; i < 10; i++) {
-    vineParticles.push({
-      x: VW * .3 + Math.random() * VW * .4,
-      y: VH * .6 + Math.random() * VH * .25,
-      vx: (Math.random() - .5) * 3,
-      vy: -(Math.random() * 4 + 2),
-      life: 40 + Math.random() * 30,
-      color: cols[Math.floor(Math.random() * cols.length)],
-      size: Math.random() * 3 + 1
+      // ---- Leaf ----
+      class Leaf {
+        constructor(x, y, angle) {
+          this.x = x; this.y = y; this.angle = angle;
+          this.size = 0;
+          this.targetSize = p.random(6, 13);
+          this.swayOffset = p.random(1000);
+        }
+        grow(t) { this.size = p.lerp(0, this.targetSize, p.constrain(t, 0, 1)); }
+        draw(gt) {
+          if (this.size < 0.5) return;
+          p.push();
+          p.translate(this.x, this.y);
+          p.rotate(this.angle + p.sin(gt * 1.5 + this.swayOffset) * 0.15);
+          p.fill(90, 170, 70);
+          p.stroke(50, 120, 40);
+          p.strokeWeight(0.5);
+          p.beginShape();
+          p.vertex(0, 0);
+          p.bezierVertex(this.size * 0.6, -this.size * 0.5, this.size, -this.size * 0.3, this.size * 1.2, 0);
+          p.bezierVertex(this.size, this.size * 0.3, this.size * 0.6, this.size * 0.5, 0, 0);
+          p.endShape(p.CLOSE);
+          // Vein
+          p.stroke(60, 140, 50, 80);
+          p.strokeWeight(0.4);
+          p.line(0, 0, this.size * 0.9, 0);
+          p.pop();
+        }
+      }
+
+      // ---- Flower ----
+      class Flower {
+        constructor(x, y) {
+          this.x = x; this.y = y;
+          this.bloom = 0;
+          this.swayOffset = p.random(1000);
+        }
+        bloomIn(t) { this.bloom = p.constrain(t, 0, 1); }
+        draw(gt) {
+          if (this.bloom < 0.01) return;
+          const s = this.bloom;
+          p.push();
+          p.translate(this.x, this.y);
+          p.rotate(p.sin(gt * 1.2 + this.swayOffset) * 0.08);
+          // 5 white petals
+          for (let i = 0; i < 5; i++) {
+            const a = (i / 5) * p.TWO_PI;
+            p.fill(255, 250, 245, s * 230);
+            p.noStroke();
+            p.push();
+            p.rotate(a);
+            p.ellipse(6 * s, 0, 13 * s, 7 * s);
+            p.pop();
+          }
+          // Yellow center
+          p.fill(240, 190, 50, s * 230);
+          p.noStroke();
+          p.ellipse(0, 0, 7 * s, 7 * s);
+          // Stamen dots
+          p.fill(220, 160, 30, s * 180);
+          for (let i = 0; i < 4; i++) {
+            const a = (i / 4) * p.TWO_PI + 0.3;
+            p.ellipse(p.cos(a) * 3 * s, p.sin(a) * 3 * s, 1.5, 1.5);
+          }
+          p.pop();
+        }
+      }
+
+      // ---- SETUP ----
+      p.setup = function() {
+        const c = p.createCanvas(600, 520);
+        c.parent(container);
+        p.frameRate(60);
+        initScene();
+      };
+
+      function initScene() {
+        vase = new Vase(p.width * 0.5, p.height * 0.78);
+        tree = new Branch(p.width * 0.5, p.height * 0.71, -p.PI / 2, 95, 4);
+        wateringCan = new WateringCan();
+        particles = [];
+        leaves = [];
+        flowers = [];
+        growProgress = 0;
+        bloomProgress = 0;
+        state = STATE.IDLE;
+        stateTimer = 0;
+      }
+
+      function triggerWatering() {
+        if (state !== STATE.IDLE || btnCooldown > p.millis()) return;
+        btnCooldown = p.millis() + 8000;
+        btnEl.textContent = '💧 浇灌中...';
+        btnEl.style.opacity = '0.5';
+        btnEl.style.pointerEvents = 'none';
+        state = STATE.WATERING;
+        stateTimer = 0;
+        wateringCan.reset();
+        msgEl.textContent = '🪵 浇水壶飞来，即将滋润枯木';
+      }
+
+      function showMsg(text, highlight) {
+        msgEl.textContent = text;
+        if (highlight) { msgEl.classList.remove('highlight'); void msgEl.offsetWidth; msgEl.classList.add('highlight'); }
+      }
+
+      // ---- DRAW ----
+      p.draw = function() {
+        const dt = p.deltaTime / 1000;
+        globalTime += dt;
+
+        // Background
+        p.background(250, 247, 242);
+
+        // Draw vase
+        vase.draw();
+
+        // Draw tree
+        tree.draw(vase.x, vase.y - 58, -p.PI / 2, globalTime);
+
+        // Draw leaves
+        for (const leaf of leaves) leaf.draw(globalTime);
+
+        // Draw flowers
+        for (const flower of flowers) flower.draw(globalTime);
+
+        // State machine
+        stateTimer += dt;
+
+        if (state === STATE.WATERING) {
+          const alive = wateringCan.update(dt);
+          wateringCan.draw();
+
+          // Update water drops
+          particles = particles.filter(d => d.update());
+          for (const d of particles) d.draw();
+
+          if (!alive && wateringCan.phase === 'leave' && stateTimer > 3.8) {
+            state = STATE.GROWING;
+            stateTimer = 0;
+            showMsg('🌱 水滴渗入土壤，枯木开始苏醒', true);
+
+            // Generate leaves on branch endpoints
+            const endpoints = tree.getBranchEndpoints(vase.x, vase.y - 58, -p.PI / 2, globalTime);
+            for (const ep of endpoints) {
+              if (p.random() < 0.7) {
+                leaves.push(new Leaf(ep.x, ep.y, ep.angle + p.random(-0.5, 0.5)));
+              }
+            }
+          }
+        }
+
+        if (state === STATE.GROWING) {
+          growProgress = p.min(growProgress + dt * 0.25, 1);
+          for (const leaf of leaves) leaf.grow(growProgress);
+
+          if (growProgress > 0.6 && stateTimer > 2.5) {
+            state = STATE.BLOOMING;
+            stateTimer = 0;
+            showMsg('🌺 绿叶已成，花朵即将绽放', true);
+
+            // Generate flowers on some branch endpoints
+            const endpoints = tree.getBranchEndpoints(vase.x, vase.y - 58, -p.PI / 2, globalTime);
+            for (const ep of endpoints) {
+              if (p.random() < 0.45) {
+                flowers.push(new Flower(ep.x, ep.y));
+              }
+            }
+          }
+        }
+
+        if (state === STATE.BLOOMING) {
+          bloomProgress = p.min(bloomProgress + dt * 0.3, 1);
+          for (const flower of flowers) flower.bloomIn(bloomProgress);
+
+          if (bloomProgress >= 1 && stateTimer > 2) {
+            state = STATE.DONE;
+            showMsg('🌸 枯木逢春，繁花似锦', true);
+            btnEl.textContent = '🔄 再看一次';
+            btnEl.style.opacity = '1';
+            btnEl.style.pointerEvents = 'auto';
+          }
+        }
+
+        if (state === STATE.IDLE && stateTimer > 2 && stateTimer < 2.1) {
+          showMsg('🪵 一棵枯木，在等待一场甘霖');
+        }
+      };
+
+      // ---- Reset ----
+      window.triggerWatering = function() {
+        if (state === STATE.DONE) {
+          initScene();
+          btnEl.textContent = '💧 浇灌';
+          btnEl.style.opacity = '1';
+          btnEl.style.pointerEvents = 'auto';
+          showMsg('🪵 一棵枯木，在等待一场甘霖');
+          return;
+        }
+        triggerWatering();
+      };
+
+      p.windowResized = function() {};
     });
-  }
-}
-
-function addLeaf() {
-  const branchIdx = vineBranches.length > 0 ? Math.floor(Math.random() * vineBranches.length) : -1;
-  vineLeaves.push({
-    branchIdx,
-    t: Math.random() * .8 + .1,
-    side: Math.random() > .5 ? 1 : -1,
-    size: Math.random() * .5 + .5,
-    sway: Math.random() * Math.PI * 2,
-    hue: 100 + Math.random() * 40
-  });
-}
-
-function addBranch() {
-  vineBranches.push({
-    t: Math.random() * .6 + .2,
-    side: Math.random() > .5 ? 1 : -1,
-    length: Math.random() * .4 + .2,
-    angle: (Math.random() * .5 + .3) * (Math.random() > .5 ? 1 : -1),
-    curve: Math.random() * .3
-  });
-}
-
-function addFlower() {
-  vineFlowers.push({
-    branchIdx: vineBranches.length > 0 ? Math.floor(Math.random() * vineBranches.length) : -1,
-    t: Math.random() * .6 + .3,
-    side: Math.random() > .5 ? 1 : -1,
-    size: Math.random() * .4 + .6,
-    hue: Math.random() < .5 ? 330 + Math.random() * 30 : 20 + Math.random() * 25
-  });
-}
-
-function checkMilestones() {
-  MILESTONES.forEach(m => {
-    if (vineGrowth >= m.pct && !milestoneReached.has(m.pct)) {
-      milestoneReached.add(m.pct);
-      const msgEl = document.getElementById('vineMessage');
-      msgEl.textContent = m.msg;
-      msgEl.classList.remove('highlight');
-      void msgEl.offsetWidth;
-      msgEl.classList.add('highlight');
-    }
-  });
-}
-
-function updateVineDisplay() {
-  document.getElementById('vineMeterFill').style.width = vineGrowth + '%';
-  document.getElementById('vineMeterText').textContent = vineGrowth + '%';
-}
-
-// Auto passive growth (very slow)
-setInterval(() => {
-  if (vineGrowth < 100) {
-    vineGrowth = Math.min(100, vineGrowth + .3);
-    if (vineGrowth > 15 && Math.random() < .15) addLeaf();
-    if (vineGrowth > 40 && Math.random() < .08) addBranch();
-    if (vineGrowth > 70 && Math.random() < .06) addFlower();
-    updateVineDisplay();
-    checkMilestones();
-  }
-}, 2000);
-
-function drawVineScene() {
-  vineCtx.clearRect(0, 0, VW, VH);
-  vineTime += .016;
-
-  const groundY = VH * .78;
-  const stemBaseX = VW * .45;
-  const stemBaseY = groundY;
-
-  // Sky gradient
-  const skyGrad = vineCtx.createLinearGradient(0, 0, 0, groundY);
-  skyGrad.addColorStop(0, '#E8F2FA');
-  skyGrad.addColorStop(.6, '#F5F0E8');
-  skyGrad.addColorStop(1, '#E8D5C0');
-  vineCtx.fillStyle = skyGrad;
-  vineCtx.fillRect(0, 0, VW, groundY);
-
-  // Ground / soil
-  vineCtx.fillStyle = '#C8A882';
-  vineCtx.fillRect(0, groundY, VW, VH - groundY);
-  vineCtx.fillStyle = '#B8956E';
-  vineCtx.beginPath();
-  vineCtx.ellipse(VW * .45, groundY, VW * .35, 18, 0, Math.PI, 0);
-  vineCtx.fill();
-
-  // Soil details
-  vineCtx.fillStyle = '#A07850';
-  for (let i = 0; i < 12; i++) {
-    const sx = VW * .2 + Math.random() * VW * .5;
-    const sy = groundY + 5 + Math.random() * 30;
-    vineCtx.beginPath();
-    vineCtx.arc(sx, sy, Math.random() * 4 + 2, 0, Math.PI * 2);
-    vineCtx.fill();
-  }
-
-  // Small stones
-  vineCtx.fillStyle = '#D0C0B0';
-  [
-    [VW * .3, groundY + 8, 6],
-    [VW * .55, groundY + 12, 4],
-    [VW * .65, groundY + 6, 7],
-    [VW * .25, groundY + 18, 3]
-  ].forEach(([sx, sy, sr]) => {
-    vineCtx.beginPath();
-    vineCtx.arc(sx, sy, sr, 0, Math.PI * 2);
-    vineCtx.fill();
-  });
-
-  // Main stem
-  const stemGrow = vineGrowth / 100;
-  const stemHeight = VH * .7 * stemGrow;
-  const stemSegments = 40;
-  const stemWidth = 3 + stemGrow * 6;
-
-  vineCtx.strokeStyle = '#5A8A50';
-  vineCtx.lineWidth = stemWidth;
-  vineCtx.lineCap = 'round';
-  vineCtx.beginPath();
-  vineCtx.moveTo(stemBaseX, stemBaseY);
-
-  for (let i = 0; i <= stemSegments; i++) {
-    const t = i / stemSegments;
-    const x = stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t;
-    const y = stemBaseY - t * stemHeight;
-    vineCtx.lineTo(x, y);
-  }
-  vineCtx.stroke();
-
-  // Stem highlight
-  vineCtx.strokeStyle = 'rgba(255,255,255,.15)';
-  vineCtx.lineWidth = stemWidth * .3;
-  vineCtx.beginPath();
-  vineCtx.moveTo(stemBaseX + 2, stemBaseY);
-  for (let i = 0; i <= stemSegments; i++) {
-    const t = i / stemSegments;
-    const x = stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t + 2;
-    const y = stemBaseY - t * stemHeight;
-    vineCtx.lineTo(x, y);
-  }
-  vineCtx.stroke();
-
-  // Get stem position at any t
-  function stemPos(t) {
-    return {
-      x: stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t,
-      y: stemBaseY - t * stemHeight
-    };
-  }
-
-  // Draw branches
-  vineBranches.forEach(b => {
-    const sp = stemPos(b.t);
-    const bx = sp.x + b.side * 20;
-    const by = sp.y;
-    const len = stemHeight * b.length;
-    const angle = b.side * b.angle;
-
-    vineCtx.strokeStyle = '#5A8A50';
-    vineCtx.lineWidth = 2 + stemGrow * 2;
-    vineCtx.beginPath();
-    vineCtx.moveTo(sp.x, sp.y);
-    vineCtx.quadraticCurveTo(
-      sp.x + b.side * len * .6,
-      sp.y - len * .4,
-      sp.x + Math.cos(angle) * len + Math.sin(b.curve + vineTime * .2) * len * .3,
-      sp.y - len * .7
-    );
-    vineCtx.stroke();
-  });
-
-  // Draw leaves
-  vineLeaves.forEach(leaf => {
-    let sp;
-    if (leaf.branchIdx >= 0 && leaf.branchIdx < vineBranches.length) {
-      const b = vineBranches[leaf.branchIdx];
-      const bsp = stemPos(b.t);
-      const len = stemHeight * b.length;
-      const angle = b.side * b.angle;
-      sp = {
-        x: bsp.x + Math.cos(angle) * len * leaf.t + Math.sin(b.curve + vineTime * .2) * len * .3 * leaf.t,
-        y: bsp.y - len * .7 * leaf.t
-      };
-    } else {
-      sp = stemPos(leaf.t);
-    }
-
-    const sway = Math.sin(leaf.sway + vineTime * 1.5) * 4;
-    vineCtx.save();
-    vineCtx.translate(sp.x, sp.y);
-    vineCtx.rotate(leaf.side * .5 + sway * .05);
-    vineCtx.fillStyle = `hsl(${leaf.hue},55%,${35 + leaf.size * 15}%)`;
-    vineCtx.beginPath();
-    vineCtx.ellipse(0, 0, 10 * leaf.size, 6 * leaf.size, leaf.side * .3, 0, Math.PI * 2);
-    vineCtx.fill();
-    vineCtx.strokeStyle = `hsl(${leaf.hue},40%,25%)`;
-    vineCtx.lineWidth = .6;
-    vineCtx.stroke();
-    vineCtx.restore();
-  });
-
-  // Draw flowers
-  vineFlowers.forEach(flower => {
-    let sp;
-    if (flower.branchIdx >= 0 && flower.branchIdx < vineBranches.length) {
-      const b = vineBranches[flower.branchIdx];
-      const bsp = stemPos(b.t);
-      const len = stemHeight * b.length;
-      const angle = b.side * b.angle;
-      sp = {
-        x: bsp.x + Math.cos(angle) * len * flower.t,
-        y: bsp.y - len * .7 * flower.t
-      };
-    } else {
-      sp = stemPos(flower.t);
-    }
-
-    const size = 8 * flower.size;
-    vineCtx.save();
-    vineCtx.translate(sp.x, sp.y);
-    // Petals
-    for (let p = 0; p < 5; p++) {
-      const pa = (p / 5) * Math.PI * 2 + vineTime * .2;
-      vineCtx.fillStyle = `hsla(${flower.hue},70%,${65 + flower.size * 15}%,.8)`;
-      vineCtx.beginPath();
-      vineCtx.ellipse(Math.cos(pa) * size * .4, Math.sin(pa) * size * .4, size * .5, size * .25, pa, 0, Math.PI * 2);
-      vineCtx.fill();
-    }
-    // Center
-    vineCtx.fillStyle = '#F0D878';
-    vineCtx.beginPath();
-    vineCtx.arc(0, 0, size * .25, 0, Math.PI * 2);
-    vineCtx.fill();
-    vineCtx.restore();
-  });
-
-  // Seed at base (if early stage)
-  if (stemGrow < .15) {
-    vineCtx.fillStyle = '#8B6914';
-    vineCtx.beginPath();
-    vineCtx.ellipse(stemBaseX, groundY - 2, 8, 5, 0, 0, Math.PI * 2);
-    vineCtx.fill();
-  }
-
-  // Particles
-  vineParticles = vineParticles.filter(p => { p.life--; p.x += p.vx; p.y += p.vy; p.vy *= .97; return p.life > 0; });
-  vineParticles.forEach(p => {
-    vineCtx.globalAlpha = p.life / 70;
-    vineCtx.fillStyle = p.color;
-    vineCtx.beginPath();
-    vineCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    vineCtx.fill();
-  });
-  vineCtx.globalAlpha = 1;
-
-  // Title text at top
-  if (stemGrow > .9) {
-    vineCtx.fillStyle = 'rgba(44,62,80,.12)';
-    vineCtx.font = 'bold 28px -apple-system,"PingFang SC",sans-serif';
-    vineCtx.textAlign = 'center';
-    vineCtx.fillText('繁花似锦，未来可期', VW * .55, VH * .1);
-  }
-
-  requestAnimationFrame(drawVineScene);
-}
-drawVineScene();
+  };
+  document.head.appendChild(script);
+})();
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
