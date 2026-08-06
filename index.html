@@ -314,9 +314,10 @@ ul{list-style:none}
 
 /* ===== Decision Wheel ===== */
 .wheel-wrapper{max-width:480px;margin:0 auto;text-align:center}
-.wheel-stage{position:relative;width:300px;height:300px;margin:0 auto 20px}
+.wheel-stage{position:relative;width:340px;height:340px;margin:0 auto 20px}
 .wheel-canvas{width:100%;height:100%;cursor:pointer}
 .wheel-canvas:hover{filter:brightness(1.03)}
+@media(max-width:400px){.wheel-stage{width:280px;height:280px}}
 .wheel-pointer{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
   width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;
   border-top:32px solid var(--sky-dark);z-index:2;
@@ -1186,7 +1187,7 @@ skillCards.forEach(card => {
 // ===== Decision Wheel =====
 const wheelCanvas = document.getElementById('wheelCanvas');
 const wheelCtx = wheelCanvas.getContext('2d');
-const WHEEL_R = 265;
+const WHEEL_R = 270;
 const WHEEL_CX = 300;
 const WHEEL_CY = 300;
 
@@ -1271,30 +1272,23 @@ function drawWheel() {
 
     // Text with shadow
     const textAngle = startAngle + sliceAngle / 2;
-    const textR = WHEEL_R * .58;
+    const textR = WHEEL_R * .52;
     wheelCtx.save();
     wheelCtx.translate(WHEEL_CX + Math.cos(textAngle) * textR, WHEEL_CY + Math.sin(textAngle) * textR);
     wheelCtx.rotate(textAngle + Math.PI / 2);
-    wheelCtx.font = 'bold 17px -apple-system, "PingFang SC", sans-serif';
+    wheelCtx.font = 'bold 22px -apple-system, "PingFang SC", sans-serif';
     wheelCtx.textAlign = 'center';
 
     // Text shadow
-    wheelCtx.fillStyle = 'rgba(0,0,0,.15)';
+    wheelCtx.fillStyle = 'rgba(0,0,0,.18)';
     const label = wheelOptions[i];
-    if (label.length > 6) {
-      wheelCtx.fillText(label.substring(0, 6), 1, -3);
-      wheelCtx.fillText(label.substring(6), 1, 19);
-    } else {
-      wheelCtx.fillText(label, 1, 7);
-    }
+    // Single line, trim if needed
+    let displayText = label;
+    if (displayText.length > 8) displayText = displayText.substring(0, 8) + '…';
+    wheelCtx.fillText(displayText, 1, 4);
     // Text
     wheelCtx.fillStyle = '#fff';
-    if (label.length > 6) {
-      wheelCtx.fillText(label.substring(0, 6), 0, -4);
-      wheelCtx.fillText(label.substring(6), 0, 18);
-    } else {
-      wheelCtx.fillText(label, 0, 6);
-    }
+    wheelCtx.fillText(displayText, 0, 3);
     wheelCtx.restore();
   }
 
@@ -1321,7 +1315,7 @@ function drawWheel() {
 
   // Center text
   wheelCtx.fillStyle = '#2C3E50';
-  wheelCtx.font = 'bold 13px -apple-system, "PingFang SC", sans-serif';
+  wheelCtx.font = 'bold 16px -apple-system, "PingFang SC", sans-serif';
   wheelCtx.textAlign = 'center';
   wheelCtx.textBaseline = 'middle';
   wheelCtx.fillText('GO', WHEEL_CX, WHEEL_CY);
