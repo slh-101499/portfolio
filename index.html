@@ -1429,42 +1429,69 @@ function drawVines() {
 
 function drawFlowers() {
   vineData.forEach((v, i) => {
-    // Flowers at hour positions (every 5th node)
     if (i % 5 !== 0 || v.flowerBloom < 0.03) return;
     const r = TRACE_R + Math.sin(i * 0.4 + clockTime * 0.5) * 6;
     const x = CCX + Math.cos(v.angle) * r;
     const y = CCY + Math.sin(v.angle) * r;
-    const sway = Math.sin(clockTime * 1.5 + v.flowerPhase) * 0.08;
-    const breathe = 1 + Math.sin(clockTime * 0.8 + v.flowerPhase) * 0.12;
+    const sway = Math.sin(clockTime * 1.5 + v.flowerPhase) * 0.06;
+    const breathe = 1 + Math.sin(clockTime * 0.7 + v.flowerPhase) * 0.1;
 
     clockCtx.save();
     clockCtx.translate(x, y);
     clockCtx.rotate(sway);
     clockCtx.scale(breathe * v.flowerBloom, breathe * v.flowerBloom);
 
-    // 5 petals, white with pinkish tips
+    const fs = 9 * v.flowerSize;
+
+    // 5 large rounded petals — white with soft pink blush near center
     for (let p = 0; p < 5; p++) {
-      const pa = (p / 5) * Math.PI * 2;
-      clockCtx.fillStyle = 'rgba(255,250,248,.9)';
+      const pa = (p / 5) * Math.PI * 2 + 0.15;
+      clockCtx.save();
+      clockCtx.rotate(pa);
+
+      // Petal shape — wide rounded teardrop
       clockCtx.beginPath();
-      const ps = 8 * v.flowerSize;
-      clockCtx.ellipse(Math.cos(pa) * ps * 0.55, Math.sin(pa) * ps * 0.55, ps, ps * 0.45, pa, 0, Math.PI * 2);
+      clockCtx.moveTo(0, 0);
+      clockCtx.bezierCurveTo(-fs * 0.7, -fs * 0.3, -fs * 0.8, -fs * 0.8, 0, -fs * 1.1);
+      clockCtx.bezierCurveTo(fs * 0.8, -fs * 0.8, fs * 0.7, -fs * 0.3, 0, 0);
+      clockCtx.closePath();
+
+      // Gradient from pink center to white edge
+      const petalGrad = clockCtx.createRadialGradient(0, -fs * 0.15, fs * 0.05, 0, -fs * 0.8, fs * 1.1);
+      petalGrad.addColorStop(0, 'rgba(255,225,215,.95)');
+      petalGrad.addColorStop(0.3, 'rgba(255,240,235,.9)');
+      petalGrad.addColorStop(0.7, 'rgba(255,250,248,.8)');
+      petalGrad.addColorStop(1, 'rgba(255,253,250,.6)');
+      clockCtx.fillStyle = petalGrad;
       clockCtx.fill();
+
+      // Delicate petal edge
+      clockCtx.strokeStyle = 'rgba(240,210,200,.3)';
+      clockCtx.lineWidth = 0.3;
+      clockCtx.stroke();
+
+      clockCtx.restore();
     }
-    // Inner petals — slightly smaller, pink tint
-    for (let p = 0; p < 5; p++) {
-      const pa = (p / 5) * Math.PI * 2 + 0.3;
-      clockCtx.fillStyle = 'rgba(255,245,242,.6)';
-      clockCtx.beginPath();
-      const ps = 5 * v.flowerSize;
-      clockCtx.ellipse(Math.cos(pa) * ps * 0.4, Math.sin(pa) * ps * 0.4, ps, ps * 0.4, pa, 0, Math.PI * 2);
-      clockCtx.fill();
-    }
-    // Yellow center
-    clockCtx.fillStyle = 'rgba(245,195,70,.9)';
+
+    // Yellow center — layered
     clockCtx.beginPath();
-    clockCtx.arc(0, 0, 3.5 * v.flowerSize, 0, Math.PI * 2);
+    clockCtx.arc(0, 0, fs * 0.32, 0, Math.PI * 2);
+    const centerGrad = clockCtx.createRadialGradient(0, 0, 0, 0, 0, fs * 0.32);
+    centerGrad.addColorStop(0, '#F5D060');
+    centerGrad.addColorStop(0.5, '#F0C840');
+    centerGrad.addColorStop(1, '#E0A830');
+    clockCtx.fillStyle = centerGrad;
     clockCtx.fill();
+
+    // Stamens — tiny dots around center
+    for (let s = 0; s < 8; s++) {
+      const sa = (s / 8) * Math.PI * 2 + 0.2;
+      const sr = fs * 0.2;
+      clockCtx.beginPath();
+      clockCtx.arc(Math.cos(sa) * sr, Math.sin(sa) * sr, fs * 0.05, 0, Math.PI * 2);
+      clockCtx.fillStyle = 'rgba(200,140,40,.7)';
+      clockCtx.fill();
+    }
 
     clockCtx.restore();
   });
