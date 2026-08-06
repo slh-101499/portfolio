@@ -1194,6 +1194,7 @@ function resetClock() {
   minuteAngle = -Math.PI / 2; hourAngle = -Math.PI / 2;
   tracedArc = 0; revealedWords = [];
   vineData = []; clockParticles = [];
+  for (const k in wordOpacities) delete wordOpacities[k];
   for (let i = 0; i < 60; i++) {
     vineData.push({ angle: (i / 60) * Math.PI * 2, vineGrow: 0, leafGrow: 0, flowerBloom: 0, leafPhase: Math.random() * Math.PI * 2, flowerPhase: Math.random() * Math.PI * 2, flowerSize: 0.7 + Math.random() * 0.6 });
   }
@@ -1282,6 +1283,10 @@ function drawTracedArc() {
   clockCtx.stroke();
 }
 
+// Pre-generate random sizes for each word (fixed per session)
+const wordSizes = WORDS.map(() => 26 + Math.floor(Math.random() * 22)); // 26-47px
+const wordOpacities = {}; // track fade-in progress per word
+
 function drawWords() {
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
@@ -1290,29 +1295,35 @@ function drawWords() {
     const wordY = CCY + Math.sin(angle) * wordR;
     const wordAngle = (i / 12) * Math.PI * 2;
 
+    // Smooth fade-in tracking
+    if (revealedWords.includes(i) && !wordOpacities[i]) wordOpacities[i] = 0;
+    if (wordOpacities[i] !== undefined) {
+      wordOpacities[i] = Math.min(1, wordOpacities[i] + 0.012);
+    }
+
     let alpha = 0;
-    if (revealedWords.includes(i)) {
-      alpha = 0.9;
-    } else if (clockState === 'tracing' && tracedArc > wordAngle) {
-      alpha = Math.min(0.75, (tracedArc - wordAngle) * 2.5);
+    if (wordOpacities[i] !== undefined) {
+      // Ease-in curve for smooth appearance
+      const t = wordOpacities[i];
+      alpha = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // easeInOutQuad
+      alpha *= 0.88;
     } else if (clockState === 'tracing') {
-      alpha = 0.06;
+      alpha = 0.05;
     }
 
     if (alpha < 0.02) continue;
 
-    // Varied font sizes — artistic, irregular
-    const sizes = [22, 16, 27, 18, 24, 20, 26, 17, 28, 19, 23, 15];
-    const baseSize = sizes[i];
-    const size = baseSize + (revealedWords.includes(i) ? Math.sin(clockTime * 2 + i) * 1.5 : 0);
+    const size = wordSizes[i];
 
     clockCtx.save();
     clockCtx.translate(wordX, wordY);
+    // Slight float-up as it fades in
+    const floatY = wordOpacities[i] !== undefined ? (1 - wordOpacities[i]) * 8 : 0;
     clockCtx.fillStyle = `rgba(60,70,85,${alpha})`;
-    clockCtx.font = `${Math.round(size)}px -apple-system,"PingFang SC",serif`;
+    clockCtx.font = `bold ${Math.round(size)}px -apple-system,"PingFang SC",serif`;
     clockCtx.textAlign = 'center';
     clockCtx.textBaseline = 'middle';
-    clockCtx.fillText(WORDS[i], 0, 0);
+    clockCtx.fillText(WORDS[i], 0, floatY);
     clockCtx.restore();
   }
 }
