@@ -1521,11 +1521,8 @@ function drawFlowers() {
 function drawParticles() {
   particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.life--; return p.life > 0; });
   particles.forEach(p => {
-    clockCtx.fillStyle = p.color.replace(')', `,${p.life / 45})`).replace('rgb', 'rgba');
-    if (p.color.startsWith('#')) {
-      clockCtx.globalAlpha = p.life / 45;
-      clockCtx.fillStyle = p.color;
-    }
+    clockCtx.globalAlpha = p.life / 45;
+    clockCtx.fillStyle = p.color;
     clockCtx.beginPath();
     clockCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     clockCtx.fill();
