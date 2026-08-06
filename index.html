@@ -1272,7 +1272,7 @@ function drawWheel() {
 
     // Text with shadow
     const textAngle = startAngle + sliceAngle / 2;
-    const textR = WHEEL_R * .52;
+    const textR = WHEEL_R * .72;
     wheelCtx.save();
     wheelCtx.translate(WHEEL_CX + Math.cos(textAngle) * textR, WHEEL_CY + Math.sin(textAngle) * textR);
     wheelCtx.rotate(textAngle + Math.PI / 2);
@@ -1284,7 +1284,7 @@ function drawWheel() {
     const label = wheelOptions[i];
     // Single line, trim if needed
     let displayText = label;
-    if (displayText.length > 8) displayText = displayText.substring(0, 8) + '…';
+    if (displayText.length > 10) displayText = displayText.substring(0, 10) + '…';
     wheelCtx.fillText(displayText, 1, 4);
     // Text
     wheelCtx.fillStyle = '#fff';
@@ -1294,7 +1294,7 @@ function drawWheel() {
 
   // Inner ring
   wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R * .22, 0, 2 * Math.PI);
+  wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R * .18, 0, 2 * Math.PI);
   wheelCtx.fillStyle = '#fff';
   wheelCtx.fill();
   wheelCtx.strokeStyle = 'rgba(0,0,0,.08)';
@@ -1302,11 +1302,11 @@ function drawWheel() {
   wheelCtx.stroke();
 
   // Center circle
-  const centerGrad = wheelCtx.createRadialGradient(WHEEL_CX-8, WHEEL_CY-8, 5, WHEEL_CX, WHEEL_CY, 38);
+  const centerGrad = wheelCtx.createRadialGradient(WHEEL_CX-6, WHEEL_CY-6, 3, WHEEL_CX, WHEEL_CY, 44);
   centerGrad.addColorStop(0, '#fff');
   centerGrad.addColorStop(1, '#E8E3DA');
   wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, 38, 0, 2 * Math.PI);
+  wheelCtx.arc(WHEEL_CX, WHEEL_CY, 44, 0, 2 * Math.PI);
   wheelCtx.fillStyle = centerGrad;
   wheelCtx.fill();
   wheelCtx.strokeStyle = 'rgba(0,0,0,.1)';
@@ -1315,7 +1315,7 @@ function drawWheel() {
 
   // Center text
   wheelCtx.fillStyle = '#2C3E50';
-  wheelCtx.font = 'bold 16px -apple-system, "PingFang SC", sans-serif';
+  wheelCtx.font = 'bold 20px -apple-system, "PingFang SC", sans-serif';
   wheelCtx.textAlign = 'center';
   wheelCtx.textBaseline = 'middle';
   wheelCtx.fillText('GO', WHEEL_CX, WHEEL_CY);
@@ -1341,7 +1341,7 @@ wheelCanvas.addEventListener('click', (e) => {
   const mx = (e.clientX - rect.left) * sx;
   const my = (e.clientY - rect.top) * sy;
   const dist = Math.sqrt((mx - WHEEL_CX) ** 2 + (my - WHEEL_CY) ** 2);
-  if (dist < 50) spinWheel();
+  if (dist < 55) spinWheel();
 });
 
 function setWheelPreset(type) {
