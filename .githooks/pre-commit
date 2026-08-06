@@ -1,0 +1,67 @@
+#!/bin/bash
+# Pre-commit hook: scan staged files for secrets & sensitive data
+# Install: git config core.hooksPath .githooks
+
+set -e
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+PASS=0
+
+echo "🔍 扫描暂存区文件中的敏感信息..."
+
+# Patterns to detect
+PATTERNS=(
+  # API keys & tokens
+  "api_key\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+  "apikey\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+  "api-key\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]"
+  "secret\s*[:=]\s*['\"][A-Za-z0-9_\-]{8,}['\"]"
+  "token\s*[:=]\s*['\"][A-Za-z0-9_\-\.]{16,}['\"]"
+  "password\s*[:=]\s*['\"][^'\"]+['\"]"
+  "passwd\s*[:=]\s*['\"][^'\"]+['\"]"
+  # Private keys
+  "-----BEGIN (RSA|DSA|EC|OPENSSH|PGP) PRIVATE KEY-----"
+  "ssh-rsa AAAA[A-Za-z0-9+/=]{100,}"
+  "ssh-ed25519 AAAA[A-Za-z0-9+/=]{40,}"
+  # Cloud credentials
+  "AKIA[0-9A-Z]{16}"                           # AWS Access Key
+  "AIza[0-9A-Za-z\-_]{35}"                      # GCP API Key
+  "sk-[a-zA-Z0-9]{32,}"                         # OpenAI / LLM API keys
+  "ghp_[a-zA-Z0-9]{36,}"                        # GitHub PAT
+  "gho_[a-zA-Z0-9]{36,}"                        # GitHub OAuth
+  "ghu_[a-zA-Z0-9]{36,}"                        # GitHub User Token
+  "glpat-[a-zA-Z0-9\-]{20,}"                    # GitLab PAT
+  # JWT tokens
+  "eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+"
+)
+
+# Get list of staged files (exclude deleted)
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$STAGED" ]; then
+  echo "  ✅ 无暂存文件"
+  exit 0
+fi
+
+for pattern in "${PATTERNS[@]}"; do
+  MATCHES=$(grep -n -E -I "$pattern" $STAGED 2>/dev/null || true)
+  if [ -n "$MATCHES" ]; then
+    echo -e "  ${RED}⚠ 发现疑似敏感信息:${NC}"
+    echo "$MATCHES" | while read line; do
+      echo -e "    ${YELLOW}$line${NC}"
+    done
+    PASS=1
+  fi
+done
+
+if [ $PASS -eq 1 ]; then
+  echo ""
+  echo -e "${RED}⛔ 提交被阻止：发现疑似敏感信息，请检查上述文件。${NC}"
+  echo "  如果确认为误报，请使用 git commit --no-verify 跳过检查。"
+  exit 1
+fi
+
+echo "  ✅ 未发现敏感信息"
+exit 0

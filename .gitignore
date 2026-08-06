@@ -1,3 +1,50 @@
 .DS_Store
 *.HEIC
 高速列车轴承智能故障诊断/源数据/
+
+# Secrets & credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.pem
+*.crt
+secrets.*
+credentials.*
+.env
+.env.*
+**/.env
+
+# OS files
+Thumbs.db
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Node
+node_modules/
+package-lock.json
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
