@@ -1202,10 +1202,18 @@ function generateFlowerClusters() {
 }
 generateFlowerClusters();
 
-// Auto-start after a short delay
-setTimeout(() => {
-  if (!hasStarted) { hasStarted = true; clockState = 'tracing'; }
-}, 800);
+// Start clock when scrolled into view
+const clockSection = document.getElementById('game');
+const clockObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !hasStarted) {
+      hasStarted = true;
+      clockState = 'tracing';
+      clockObserver.unobserve(clockSection);
+    }
+  });
+}, { threshold: 0.3 });
+clockObserver.observe(clockSection);
 
 function resetClock() {
   clockState = 'tracing';
