@@ -315,20 +315,18 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
-/* ===== p5.js Tree Bloom ===== */
-.tree-wrapper{max-width:600px;margin:0 auto;text-align:center}
-.tree-canvas-container{border-radius:var(--radius-xl);overflow:hidden;
-  box-shadow:var(--shadow-lg);background:#FAF7F2;line-height:0}
-.tree-canvas-container canvas{display:block;width:100%!important;height:auto!important}
-.tree-message{font-size:15px;font-weight:600;color:var(--text-secondary);min-height:26px;
-  margin-top:12px;transition:all .5s ease}
-.tree-message.highlight{color:var(--sky-dark);animation:msgPop .6s ease}
-.tree-btn-wrap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.tree-btn{padding:12px 24px;border-radius:100px;border:2px solid #7CB3E8;
-  background:#E8F2FA;cursor:pointer;font-size:14px;font-weight:700;color:#5A8FBF;
+/* ===== Poetic Clock ===== */
+.clock-wrapper{max-width:500px;margin:0 auto;text-align:center}
+.clock-canvas{width:100%;height:auto;display:block;border-radius:var(--radius-xl);
+  background:var(--warm-white);box-shadow:var(--shadow-lg)}
+.clock-message{font-size:15px;font-weight:600;color:var(--text-secondary);
+  min-height:26px;margin-top:14px;transition:all .5s ease}
+.clock-btn-wrap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.clock-btn{padding:14px 32px;border-radius:100px;border:2px solid var(--sky);
+  background:var(--sky-light);cursor:pointer;font-size:15px;font-weight:700;color:var(--sky-dark);
   transition:all .3s ease}
-.tree-btn:hover{background:#D0E8F8;transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,179,232,.25)}
-.tree-btn:active{transform:scale(.95)}
+.clock-btn:hover{background:#D0E8F8;transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,179,232,.3)}
+.clock-btn:active{transform:scale(.96)}
 
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
@@ -548,7 +546,7 @@ ul{list-style:none}
       <a href="#projects">项目</a>
       <a href="#internship">实习</a>
       <a href="#skills">技能</a>
-      <a href="#game">枯木逢春</a>
+      <a href="#game">时间之圆</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -941,18 +939,18 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ===== Tree Bloom ===== -->
+<!-- ===== Poetic Clock ===== -->
 <section class="section section-alt" id="game">
   <div class="section-header reveal">
-    <div class="section-label">Grow</div>
-    <h2 class="section-title">枯木逢春</h2>
-    <p class="section-desc">每一次浇灌都是成长，每一次等待终将绽放</p>
+    <div class="section-label">Time</div>
+    <h2 class="section-title">时间之圆</h2>
+    <p class="section-desc">分针画过的每一刻，都藏着一个关于成长的故事</p>
   </div>
-  <div class="tree-wrapper reveal reveal-delay-1">
-    <div class="tree-canvas-container" id="treeCanvasContainer"></div>
-    <div class="tree-message" id="treeMessage">🪵 一棵枯木，在等待一场甘霖</div>
-    <div class="tree-btn-wrap">
-      <button class="tree-btn" id="treeBtn" onclick="triggerWatering()">💧 浇灌</button>
+  <div class="clock-wrapper reveal reveal-delay-1">
+    <canvas class="clock-canvas" id="clockCanvas" width="800" height="800"></canvas>
+    <div class="clock-message" id="clockMessage">🕐 点击开始，让时间诉说</div>
+    <div class="clock-btn-wrap">
+      <button class="clock-btn" id="clockBtn" onclick="startClock()">✨ 开始</button>
     </div>
   </div>
 </section>
@@ -1166,446 +1164,404 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== p5.js Tree Bloom =====
-(function(){
-  const container = document.getElementById('treeCanvasContainer');
-  const msgEl = document.getElementById('treeMessage');
-  const btnEl = document.getElementById('treeBtn');
+// ===== Poetic Clock =====
+const clockCanvas = document.getElementById('clockCanvas');
+const clockCtx = clockCanvas.getContext('2d');
+const CW = clockCanvas.width;
+const CH = clockCanvas.height;
+const CCX = CW / 2;
+const CCY = CH / 2;
+const CLOCK_R = 280;
+const TRACE_R = CLOCK_R - 25;
 
-  // Load p5 dynamically
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js';
-  script.onload = () => {
-    new p5((p) => {
-      // ---- State Machine ----
-      const STATE = { IDLE: 0, WATERING: 1, GROWING: 2, BLOOMING: 3, DONE: 4 };
-      let state = STATE.IDLE;
-      let stateTimer = 0;
-      let globalTime = 0;
-      let wateringCan = null;
-      let particles = [];
-      let tree = null;
-      let vase = null;
-      let leaves = [];
-      let flowers = [];
-      let growProgress = 0; // 0 to 1
-      let bloomProgress = 0;
-      let btnCooldown = 0;
+const WORDS = ['学习','成长','焦虑','压力','选择','迷茫','坚持','自由','热爱','遗憾','奔跑','沉默'];
 
-      // ---- Vase Class ----
-      class Vase {
-        constructor(x, y) { this.x = x; this.y = y; }
-        draw() {
-          p.push();
-          p.translate(this.x, this.y);
-          // Shadow
-          p.noStroke();
-          p.fill(0, 0, 0, 15);
-          p.ellipse(0, 2, 62, 10);
-          // Body
-          p.fill(200, 160, 130);
-          p.stroke(160, 120, 90);
-          p.strokeWeight(1.5);
-          p.beginShape();
-          p.vertex(-22, -60); p.vertex(-28, -20);
-          p.bezierVertex(-35, 10, -30, 35, -20, 40);
-          p.vertex(20, 40);
-          p.bezierVertex(30, 35, 35, 10, 28, -20);
-          p.vertex(22, -60);
-          p.endShape(p.CLOSE);
-          // Rim
-          p.fill(210, 175, 145);
-          p.stroke(160, 120, 90);
-          p.ellipse(0, -60, 48, 12);
-          // Highlight
-          p.noStroke();
-          p.fill(255, 255, 255, 30);
-          p.ellipse(-8, -38, 8, 40);
-          p.fill(255, 255, 255, 15);
-          p.ellipse(-8, -10, 12, 35);
-          p.pop();
-        }
-      }
+let clockState = 'idle'; // idle | tracing | blooming | done
+let minuteAngle = -Math.PI / 2; // start at 12 o'clock
+let hourAngle = -Math.PI / 2;
+let tracedArc = 0; // how much of the circle has been traced (0 to 2*PI)
+let revealedWords = [];
+let vineProgress = 0;
+let flowerProgress = 0;
+let vineNodes = [];
+let flowers = [];
+let particles = [];
+let clockTime = 0;
+let traceSpeed = 0.012; // radians per frame
 
-      // ---- Tree Class (procedural) ----
-      class Branch {
-        constructor(x, y, angle, length, depth) {
-          this.x = x; this.y = y;
-          this.angle = angle;
-          this.length = length;
-          this.depth = depth;
-          this.children = [];
-          this.swayOffset = p.random(1000);
-          if (depth > 0) {
-            const nBranches = depth > 2 ? p.floor(p.random(2, 4)) : 2;
-            for (let i = 0; i < nBranches; i++) {
-              const childAngle = angle + p.random(-0.7, 0.7);
-              const childLen = length * p.random(0.55, 0.78);
-              this.children.push(new Branch(0, 0, childAngle, childLen, depth - 1));
-            }
-          }
-        }
+function startClock() {
+  if (clockState === 'tracing' || clockState === 'blooming') return;
+  if (clockState === 'done') {
+    resetClock();
+    return;
+  }
+  clockState = 'tracing';
+  tracedArc = 0;
+  revealedWords = [];
+  vineProgress = 0;
+  flowerProgress = 0;
+  vineNodes = [];
+  flowers = [];
+  particles = [];
+  document.getElementById('clockBtn').textContent = '⏳ 时光流转中...';
+  document.getElementById('clockBtn').style.pointerEvents = 'none';
+  document.getElementById('clockBtn').style.opacity = '0.5';
+  document.getElementById('clockMessage').textContent = '🕐 分针开始转动...';
+}
 
-        getEndPos(parentX, parentY, parentAngle, t) {
-          const sway = p.sin(t * 0.8 + this.swayOffset) * (0.03 / (this.depth + 1));
-          const a = parentAngle + this.angle + sway;
-          return {
-            x: parentX + p.cos(a) * this.length,
-            y: parentY + p.sin(a) * this.length,
-            angle: a
-          };
-        }
+function resetClock() {
+  clockState = 'idle';
+  minuteAngle = -Math.PI / 2;
+  hourAngle = -Math.PI / 2;
+  tracedArc = 0;
+  revealedWords = [];
+  vineProgress = 0;
+  flowerProgress = 0;
+  vineNodes = [];
+  flowers = [];
+  particles = [];
+  document.getElementById('clockBtn').textContent = '✨ 开始';
+  document.getElementById('clockBtn').style.pointerEvents = 'auto';
+  document.getElementById('clockBtn').style.opacity = '1';
+  document.getElementById('clockMessage').textContent = '🕐 点击开始，让时间诉说';
+}
 
-        draw(parentX, parentY, parentAngle, t) {
-          const end = this.getEndPos(parentX, parentY, parentAngle, t);
-          const thickness = this.depth * 1.8 + 1.5;
-          p.stroke(90, 65, 40);
-          p.strokeWeight(thickness);
-          p.noFill();
-          p.beginShape();
-          p.vertex(parentX, parentY);
-          p.vertex(end.x, end.y);
-          p.endShape();
-          // Lighter highlight
-          p.stroke(120, 95, 65, 40);
-          p.strokeWeight(thickness * 0.5);
-          p.beginShape();
-          p.vertex(parentX + 1, parentY);
-          p.vertex(end.x + 1, end.y);
-          p.endShape();
+function drawClockFace() {
+  // Outer ring
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, CLOCK_R, 0, Math.PI * 2);
+  clockCtx.strokeStyle = '#E8E3DA';
+  clockCtx.lineWidth = 2;
+  clockCtx.stroke();
 
-          for (const child of this.children) {
-            child.draw(end.x, end.y, end.angle, t);
-          }
-        }
+  // Inner ring
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, CLOCK_R - 8, 0, Math.PI * 2);
+  clockCtx.strokeStyle = '#F2EFE9';
+  clockCtx.lineWidth = 1;
+  clockCtx.stroke();
 
-        getBranchEndpoints(parentX, parentY, parentAngle, t, result = []) {
-          const end = this.getEndPos(parentX, parentY, parentAngle, t);
-          if (this.children.length === 0 || this.depth <= 1) {
-            result.push({ x: end.x, y: end.y, angle: end.angle, depth: this.depth });
-          }
-          for (const child of this.children) {
-            child.getBranchEndpoints(end.x, end.y, end.angle, t, result);
-          }
-          return result;
-        }
-      }
+  // Hour markers
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const inner = CLOCK_R - 18;
+    const outer = CLOCK_R - 5;
+    clockCtx.beginPath();
+    clockCtx.moveTo(CCX + Math.cos(angle) * inner, CCY + Math.sin(angle) * inner);
+    clockCtx.lineTo(CCX + Math.cos(angle) * outer, CCY + Math.sin(angle) * outer);
+    clockCtx.strokeStyle = '#D0C8B8';
+    clockCtx.lineWidth = i % 3 === 0 ? 2.5 : 1.2;
+    clockCtx.stroke();
+  }
+}
 
-      // ---- WateringCan Class ----
-      class WateringCan {
-        constructor() { this.reset(); }
-        reset() {
-          this.x = -80; this.y = p.height * 0.3;
-          this.targetX = p.width * 0.25; this.targetY = p.height * 0.35;
-          this.angle = 0;
-          this.phase = 'enter'; // enter, pour, leave
-          this.phaseTimer = 0;
-          this.waterSpawnTimer = 0;
-        }
-        update(dt) {
-          this.phaseTimer += dt;
-          const t = this.phaseTimer;
-          if (this.phase === 'enter') {
-            const progress = p.min(t / 1.2, 1);
-            const eased = 1 - p.pow(1 - progress, 3);
-            this.x = p.lerp(-80, this.targetX, eased);
-            this.y = p.lerp(p.height * 0.3, this.targetY, eased);
-            this.angle = p.lerp(0, p.PI * 0.12, eased);
-            if (progress >= 1) { this.phase = 'pour'; this.phaseTimer = 0; }
-          } else if (this.phase === 'pour') {
-            this.angle = p.PI * 0.12 + p.sin(t * 4) * 0.04;
-            this.waterSpawnTimer += dt;
-            if (this.waterSpawnTimer > 0.03) {
-              this.waterSpawnTimer = 0;
-              const spoutX = this.x + p.cos(this.angle - 0.5) * 35;
-              const spoutY = this.y + p.sin(this.angle - 0.5) * 35 - 20;
-              particles.push(new WaterDrop(spoutX, spoutY));
-            }
-            if (t > 2.5) { this.phase = 'leave'; this.phaseTimer = 0; }
-          } else if (this.phase === 'leave') {
-            const progress = p.min(t / 1.0, 1);
-            const eased = 1 - p.pow(1 - progress, 3);
-            this.x = p.lerp(this.targetX, p.width + 80, eased);
-            this.y = p.lerp(this.targetY, p.height * 0.2, eased);
-            this.angle = p.lerp(p.PI * 0.12, -p.PI * 0.1, eased);
-            if (progress >= 1) { return false; }
-          }
-          return true;
-        }
-        draw() {
-          p.push();
-          p.translate(this.x, this.y);
-          p.rotate(this.angle);
-          // Shadow
-          p.noStroke();
-          p.fill(0, 0, 0, 10);
-          p.ellipse(4, 6, 55, 12);
-          // Body
-          p.fill(200, 150, 120);
-          p.stroke(150, 110, 80);
-          p.strokeWeight(1.5);
-          p.beginShape();
-          p.vertex(-20, -15); p.vertex(-25, 5);
-          p.bezierVertex(-28, 18, -22, 25, -15, 25);
-          p.vertex(18, 25);
-          p.bezierVertex(25, 25, 28, 18, 25, 5);
-          p.vertex(20, -15);
-          p.endShape(p.CLOSE);
-          // Highlight
-          p.noStroke();
-          p.fill(255, 255, 255, 30);
-          p.ellipse(-8, 0, 8, 35);
-          // Handle
-          p.noFill();
-          p.stroke(150, 110, 80);
-          p.strokeWeight(3);
-          p.arc(-5, -5, 28, 26, -p.PI * 0.8, p.PI * 0.7);
-          // Spout
-          p.stroke(150, 110, 80);
-          p.strokeWeight(3);
-          p.noFill();
-          p.beginShape();
-          p.vertex(15, -18); p.vertex(25, -30); p.vertex(33, -38);
-          p.endShape();
-          p.strokeWeight(2);
-          p.beginShape();
-          p.vertex(12, -15); p.vertex(22, -27); p.vertex(30, -35);
-          p.endShape();
-          p.pop();
-        }
-      }
+function drawTracedArc() {
+  if (tracedArc <= 0) return;
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, TRACE_R, -Math.PI / 2, -Math.PI / 2 + tracedArc);
+  clockCtx.strokeStyle = 'rgba(124,179,232,.35)';
+  clockCtx.lineWidth = 2;
+  clockCtx.setLineDash([4, 3]);
+  clockCtx.stroke();
+  clockCtx.setLineDash([]);
 
-      // ---- WaterDrop ----
-      class WaterDrop {
-        constructor(x, y) {
-          this.x = x + p.random(-4, 4);
-          this.y = y + p.random(-2, 2);
-          this.vy = p.random(1.5, 3);
-          this.vx = p.random(-0.5, 0.5);
-          this.life = 1;
-          this.size = p.random(2, 4);
-        }
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          this.vy += 0.05;
-          this.life -= 0.008;
-          return this.life > 0 && this.y < p.height * 0.78;
-        }
-        draw() {
-          p.noStroke();
-          p.fill(100, 170, 220, this.life * 200);
-          p.ellipse(this.x, this.y, this.size, this.size * 1.4);
-        }
-      }
+  // Brighter segment at the tip
+  if (tracedArc > 0.02) {
+    clockCtx.beginPath();
+    clockCtx.arc(CCX, CCY, TRACE_R, -Math.PI / 2 + tracedArc - 0.15, -Math.PI / 2 + tracedArc);
+    clockCtx.strokeStyle = 'rgba(124,179,232,.7)';
+    clockCtx.lineWidth = 2.5;
+    clockCtx.setLineDash([]);
+    clockCtx.stroke();
+  }
+}
 
-      // ---- Leaf ----
-      class Leaf {
-        constructor(x, y, angle) {
-          this.x = x; this.y = y; this.angle = angle;
-          this.size = 0;
-          this.targetSize = p.random(6, 13);
-          this.swayOffset = p.random(1000);
-        }
-        grow(t) { this.size = p.lerp(0, this.targetSize, p.constrain(t, 0, 1)); }
-        draw(gt) {
-          if (this.size < 0.5) return;
-          p.push();
-          p.translate(this.x, this.y);
-          p.rotate(this.angle + p.sin(gt * 1.5 + this.swayOffset) * 0.15);
-          p.fill(90, 170, 70);
-          p.stroke(50, 120, 40);
-          p.strokeWeight(0.5);
-          p.beginShape();
-          p.vertex(0, 0);
-          p.bezierVertex(this.size * 0.6, -this.size * 0.5, this.size, -this.size * 0.3, this.size * 1.2, 0);
-          p.bezierVertex(this.size, this.size * 0.3, this.size * 0.6, this.size * 0.5, 0, 0);
-          p.endShape(p.CLOSE);
-          // Vein
-          p.stroke(60, 140, 50, 80);
-          p.strokeWeight(0.4);
-          p.line(0, 0, this.size * 0.9, 0);
-          p.pop();
-        }
-      }
+function drawHands() {
+  // Hour hand
+  const hLen = CLOCK_R * 0.53;
+  const hx = CCX + Math.cos(hourAngle) * hLen;
+  const hy = CCY + Math.sin(hourAngle) * hLen;
+  clockCtx.beginPath();
+  clockCtx.moveTo(CCX, CCY);
+  clockCtx.lineTo(hx, hy);
+  clockCtx.strokeStyle = '#2C3E50';
+  clockCtx.lineWidth = 3.5;
+  clockCtx.lineCap = 'round';
+  clockCtx.stroke();
 
-      // ---- Flower ----
-      class Flower {
-        constructor(x, y) {
-          this.x = x; this.y = y;
-          this.bloom = 0;
-          this.swayOffset = p.random(1000);
-        }
-        bloomIn(t) { this.bloom = p.constrain(t, 0, 1); }
-        draw(gt) {
-          if (this.bloom < 0.01) return;
-          const s = this.bloom;
-          p.push();
-          p.translate(this.x, this.y);
-          p.rotate(p.sin(gt * 1.2 + this.swayOffset) * 0.08);
-          // 5 white petals
-          for (let i = 0; i < 5; i++) {
-            const a = (i / 5) * p.TWO_PI;
-            p.fill(255, 250, 245, s * 230);
-            p.noStroke();
-            p.push();
-            p.rotate(a);
-            p.ellipse(6 * s, 0, 13 * s, 7 * s);
-            p.pop();
-          }
-          // Yellow center
-          p.fill(240, 190, 50, s * 230);
-          p.noStroke();
-          p.ellipse(0, 0, 7 * s, 7 * s);
-          // Stamen dots
-          p.fill(220, 160, 30, s * 180);
-          for (let i = 0; i < 4; i++) {
-            const a = (i / 4) * p.TWO_PI + 0.3;
-            p.ellipse(p.cos(a) * 3 * s, p.sin(a) * 3 * s, 1.5, 1.5);
-          }
-          p.pop();
-        }
-      }
+  // Minute hand
+  const mLen = TRACE_R;
+  const mx = CCX + Math.cos(minuteAngle) * mLen;
+  const my = CCY + Math.sin(minuteAngle) * mLen;
+  clockCtx.beginPath();
+  clockCtx.moveTo(CCX, CCY);
+  clockCtx.lineTo(mx, my);
+  clockCtx.strokeStyle = '#5A8FBF';
+  clockCtx.lineWidth = 2.2;
+  clockCtx.stroke();
 
-      // ---- SETUP ----
-      p.setup = function() {
-        const c = p.createCanvas(600, 520);
-        c.parent(container);
-        p.frameRate(60);
-        initScene();
-      };
+  // Minute hand tip dot
+  clockCtx.beginPath();
+  clockCtx.arc(mx, my, 4.5, 0, Math.PI * 2);
+  clockCtx.fillStyle = '#7CB3E8';
+  clockCtx.fill();
+  clockCtx.strokeStyle = '#fff';
+  clockCtx.lineWidth = 1.5;
+  clockCtx.stroke();
 
-      function initScene() {
-        vase = new Vase(p.width * 0.5, p.height * 0.78);
-        tree = new Branch(p.width * 0.5, p.height * 0.71, -p.PI / 2, 95, 4);
-        wateringCan = new WateringCan();
-        particles = [];
-        leaves = [];
-        flowers = [];
-        growProgress = 0;
-        bloomProgress = 0;
-        state = STATE.IDLE;
-        stateTimer = 0;
-      }
+  // Center dot
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, 5, 0, Math.PI * 2);
+  clockCtx.fillStyle = '#2C3E50';
+  clockCtx.fill();
+}
 
-      function triggerWatering() {
-        if (state !== STATE.IDLE || btnCooldown > p.millis()) return;
-        btnCooldown = p.millis() + 8000;
-        btnEl.textContent = '💧 浇灌中...';
-        btnEl.style.opacity = '0.5';
-        btnEl.style.pointerEvents = 'none';
-        state = STATE.WATERING;
-        stateTimer = 0;
-        wateringCan.reset();
-        msgEl.textContent = '🪵 浇水壶飞来，即将滋润枯木';
-      }
+function drawWords() {
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    const wordX = CCX + Math.cos(angle) * (TRACE_R + 30);
+    const wordY = CCY + Math.sin(angle) * (TRACE_R + 30);
+    const wordIdx = i;
 
-      function showMsg(text, highlight) {
-        msgEl.textContent = text;
-        if (highlight) { msgEl.classList.remove('highlight'); void msgEl.offsetWidth; msgEl.classList.add('highlight'); }
-      }
+    // Check if this word should be revealed
+    const wordAngle = (i / 12) * Math.PI * 2;
+    let alpha = 0;
+    let scale = 0.7;
 
-      // ---- DRAW ----
-      p.draw = function() {
-        const dt = p.deltaTime / 1000;
-        globalTime += dt;
+    if (clockState === 'idle' && tracedArc === 0) {
+      alpha = 0.15;
+    } else if (revealedWords.includes(wordIdx)) {
+      const revealTime = revealedWords.indexOf(wordIdx) / 12;
+      const elapsed = Math.max(0, tracedArc / (Math.PI * 2) - wordAngle / (Math.PI * 2) + 0.05);
+      alpha = Math.min(0.9, elapsed * 3);
+      scale = 0.85 + Math.min(0.15, elapsed * 0.5);
+    } else if (tracedArc > wordAngle) {
+      alpha = Math.min(0.9, (tracedArc - wordAngle) * 4);
+      scale = 0.85 + Math.min(0.15, (tracedArc - wordAngle) * 2);
+    }
 
-        // Background
-        p.background(250, 247, 242);
+    if (alpha < 0.05) continue;
 
-        // Draw vase
-        vase.draw();
+    clockCtx.save();
+    clockCtx.translate(wordX, wordY);
+    clockCtx.scale(scale, scale);
+    clockCtx.fillStyle = `rgba(44,62,80,${alpha})`;
+    clockCtx.font = 'bold 15px -apple-system,"PingFang SC",sans-serif';
+    clockCtx.textAlign = 'center';
+    clockCtx.textBaseline = 'middle';
+    clockCtx.fillText(WORDS[wordIdx], 0, 0);
 
-        // Draw tree
-        tree.draw(vase.x, vase.y - 58, -p.PI / 2, globalTime);
+    // Subtle glow for revealed words
+    if (alpha > 0.5) {
+      clockCtx.fillStyle = `rgba(124,179,232,${alpha * 0.3})`;
+      clockCtx.fillText(WORDS[wordIdx], 0, 0);
+    }
+    clockCtx.restore();
+  }
+}
 
-        // Draw leaves
-        for (const leaf of leaves) leaf.draw(globalTime);
+function updateClock() {
+  if (clockState !== 'tracing') return;
 
-        // Draw flowers
-        for (const flower of flowers) flower.draw(globalTime);
+  tracedArc += traceSpeed;
+  minuteAngle = -Math.PI / 2 + tracedArc;
+  hourAngle = -Math.PI / 2 + tracedArc / 12;
 
-        // State machine
-        stateTimer += dt;
+  // Check for newly passed hour marks
+  const currentHour = Math.floor(tracedArc / (Math.PI * 2 / 12));
+  for (let i = 0; i < 12; i++) {
+    const wordAngle = (i / 12) * Math.PI * 2;
+    if (tracedArc >= wordAngle && !revealedWords.includes(i)) {
+      revealedWords.push(i);
+      spawnWordParticles(i);
+      document.getElementById('clockMessage').textContent = `⏳ ${WORDS[i]}——时光的印记`;
+    }
+  }
 
-        if (state === STATE.WATERING) {
-          const alive = wateringCan.update(dt);
-          wateringCan.draw();
+  // Full circle complete
+  if (tracedArc >= Math.PI * 2) {
+    tracedArc = Math.PI * 2;
+    minuteAngle = -Math.PI / 2 + Math.PI * 2;
+    clockState = 'blooming';
+    document.getElementById('clockMessage').textContent = '🌿 圆已成，藤蔓即将生长...';
+    generateVineNodes();
+  }
+}
 
-          // Update water drops
-          particles = particles.filter(d => d.update());
-          for (const d of particles) d.draw();
-
-          if (!alive && wateringCan.phase === 'leave' && stateTimer > 3.8) {
-            state = STATE.GROWING;
-            stateTimer = 0;
-            showMsg('🌱 水滴渗入土壤，枯木开始苏醒', true);
-
-            // Generate leaves on branch endpoints
-            const endpoints = tree.getBranchEndpoints(vase.x, vase.y - 58, -p.PI / 2, globalTime);
-            for (const ep of endpoints) {
-              if (p.random() < 0.7) {
-                leaves.push(new Leaf(ep.x, ep.y, ep.angle + p.random(-0.5, 0.5)));
-              }
-            }
-          }
-        }
-
-        if (state === STATE.GROWING) {
-          growProgress = p.min(growProgress + dt * 0.25, 1);
-          for (const leaf of leaves) leaf.grow(growProgress);
-
-          if (growProgress > 0.6 && stateTimer > 2.5) {
-            state = STATE.BLOOMING;
-            stateTimer = 0;
-            showMsg('🌺 绿叶已成，花朵即将绽放', true);
-
-            // Generate flowers on some branch endpoints
-            const endpoints = tree.getBranchEndpoints(vase.x, vase.y - 58, -p.PI / 2, globalTime);
-            for (const ep of endpoints) {
-              if (p.random() < 0.45) {
-                flowers.push(new Flower(ep.x, ep.y));
-              }
-            }
-          }
-        }
-
-        if (state === STATE.BLOOMING) {
-          bloomProgress = p.min(bloomProgress + dt * 0.3, 1);
-          for (const flower of flowers) flower.bloomIn(bloomProgress);
-
-          if (bloomProgress >= 1 && stateTimer > 2) {
-            state = STATE.DONE;
-            showMsg('🌸 枯木逢春，繁花似锦', true);
-            btnEl.textContent = '🔄 再看一次';
-            btnEl.style.opacity = '1';
-            btnEl.style.pointerEvents = 'auto';
-          }
-        }
-
-        if (state === STATE.IDLE && stateTimer > 2 && stateTimer < 2.1) {
-          showMsg('🪵 一棵枯木，在等待一场甘霖');
-        }
-      };
-
-      // ---- Reset ----
-      window.triggerWatering = function() {
-        if (state === STATE.DONE) {
-          initScene();
-          btnEl.textContent = '💧 浇灌';
-          btnEl.style.opacity = '1';
-          btnEl.style.pointerEvents = 'auto';
-          showMsg('🪵 一棵枯木，在等待一场甘霖');
-          return;
-        }
-        triggerWatering();
-      };
-
-      p.windowResized = function() {};
+function spawnWordParticles(idx) {
+  const angle = (idx / 12) * Math.PI * 2 - Math.PI / 2;
+  const px = CCX + Math.cos(angle) * TRACE_R;
+  const py = CCY + Math.sin(angle) * TRACE_R;
+  for (let i = 0; i < 8; i++) {
+    particles.push({
+      x: px, y: py,
+      vx: Math.cos(angle) * (Math.random() * 2 + 1),
+      vy: Math.sin(angle) * (Math.random() * 2 + 1),
+      life: 25 + Math.random() * 20,
+      size: Math.random() * 2 + 1,
+      color: Math.random() < .5 ? '#7CB3E8' : '#D4A853'
     });
-  };
-  document.head.appendChild(script);
-})();
+  }
+}
+
+function generateVineNodes() {
+  vineNodes = [];
+  for (let i = 0; i < 48; i++) {
+    const angle = (i / 48) * Math.PI * 2 - Math.PI / 2;
+    vineNodes.push({
+      x: CCX + Math.cos(angle) * TRACE_R,
+      y: CCY + Math.sin(angle) * TRACE_R,
+      angle,
+      hasLeaf: i % 2 === 0,
+      leafSize: 0,
+      leafPhase: Math.random() * Math.PI * 2
+    });
+  }
+  // Generate flowers at word positions
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+    flowers.push({
+      x: CCX + Math.cos(angle) * TRACE_R,
+      y: CCY + Math.sin(angle) * TRACE_R,
+      bloom: 0,
+      size: 0.9 + Math.random() * 0.3,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function updateBloom() {
+  if (clockState !== 'blooming') return;
+  vineProgress = Math.min(1, vineProgress + 0.008);
+  flowerProgress = Math.min(1, flowerProgress + 0.006);
+
+  // Update vine nodes
+  vineNodes.forEach(n => {
+    n.leafSize = Math.min(1, vineProgress * 1.5);
+  });
+
+  // Update flowers
+  flowers.forEach(f => {
+    f.bloom = Math.max(0, Math.min(1, flowerProgress * 1.3 - 0.3));
+  });
+
+  if (flowerProgress >= 1) {
+    clockState = 'done';
+    document.getElementById('clockBtn').textContent = '🔄 再看一次';
+    document.getElementById('clockBtn').style.pointerEvents = 'auto';
+    document.getElementById('clockBtn').style.opacity = '1';
+    document.getElementById('clockMessage').textContent = '🌸 时间画圆，生命开花';
+  }
+}
+
+function drawVines() {
+  if (vineNodes.length === 0) return;
+
+  // Main vine along the circle
+  clockCtx.beginPath();
+  for (let i = 0; i < vineNodes.length; i++) {
+    const n = vineNodes[i];
+    const r = TRACE_R + Math.sin(i * 0.5 + clockTime * 0.3) * 5 * vineProgress;
+    const x = CCX + Math.cos(n.angle) * r;
+    const y = CCY + Math.sin(n.angle) * r;
+    if (i === 0) clockCtx.moveTo(x, y);
+    else clockCtx.lineTo(x, y);
+  }
+  clockCtx.closePath();
+  clockCtx.strokeStyle = `rgba(90,138,80,${vineProgress * 0.6})`;
+  clockCtx.lineWidth = 2.5 * vineProgress;
+  clockCtx.lineCap = 'round';
+  clockCtx.stroke();
+
+  // Leaves along the vine
+  vineNodes.forEach(n => {
+    if (!n.hasLeaf || n.leafSize < 0.05) return;
+    const r = TRACE_R + Math.sin(n.angle * 3 + clockTime * 0.3) * 5 * vineProgress;
+    const x = CCX + Math.cos(n.angle) * r;
+    const y = CCY + Math.sin(n.angle) * r;
+    const sway = Math.sin(clockTime * 1.5 + n.leafPhase) * 0.2;
+
+    clockCtx.save();
+    clockCtx.translate(x, y);
+    clockCtx.rotate(n.angle + Math.PI / 2 + sway);
+    clockCtx.fillStyle = `rgba(110,180,90,${n.leafSize * 0.7})`;
+    clockCtx.beginPath();
+    clockCtx.ellipse(0, 0, 9 * n.leafSize, 5 * n.leafSize, 0, 0, Math.PI * 2);
+    clockCtx.fill();
+    clockCtx.restore();
+  });
+}
+
+function drawFlowers() {
+  flowers.forEach(f => {
+    if (f.bloom < 0.02) return;
+    const sway = Math.sin(clockTime * 1.2 + f.phase) * 0.06;
+    clockCtx.save();
+    clockCtx.translate(f.x, f.y);
+    clockCtx.rotate(sway);
+
+    // Petals
+    for (let p = 0; p < 5; p++) {
+      const pa = (p / 5) * Math.PI * 2;
+      clockCtx.fillStyle = `rgba(255,252,248,${f.bloom * 0.9})`;
+      clockCtx.beginPath();
+      clockCtx.ellipse(Math.cos(pa) * 7 * f.bloom * f.size, Math.sin(pa) * 7 * f.bloom * f.size, 10 * f.bloom * f.size, 6 * f.bloom * f.size, pa, 0, Math.PI * 2);
+      clockCtx.fill();
+    }
+    // Center
+    clockCtx.fillStyle = `rgba(240,190,60,${f.bloom})`;
+    clockCtx.beginPath();
+    clockCtx.arc(0, 0, 4 * f.bloom, 0, Math.PI * 2);
+    clockCtx.fill();
+
+    clockCtx.restore();
+  });
+}
+
+function drawParticles() {
+  particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.life--; return p.life > 0; });
+  particles.forEach(p => {
+    clockCtx.fillStyle = p.color.replace(')', `,${p.life / 45})`).replace('rgb', 'rgba');
+    if (p.color.startsWith('#')) {
+      clockCtx.globalAlpha = p.life / 45;
+      clockCtx.fillStyle = p.color;
+    }
+    clockCtx.beginPath();
+    clockCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    clockCtx.fill();
+  });
+  clockCtx.globalAlpha = 1;
+}
+
+function animateClock() {
+  clockCtx.clearRect(0, 0, CW, CH);
+  clockTime += 0.016;
+
+  // Warm background
+  clockCtx.fillStyle = '#FFFEFA';
+  clockCtx.fillRect(0, 0, CW, CH);
+
+  updateClock();
+  updateBloom();
+
+  drawClockFace();
+  drawTracedArc();
+  drawVines();
+  drawFlowers();
+  drawWords();
+  drawHands();
+  drawParticles();
+
+  // Center cap on top of everything
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, 5, 0, Math.PI * 2);
+  clockCtx.fillStyle = '#2C3E50';
+  clockCtx.fill();
+
+  requestAnimationFrame(animateClock);
+}
+
+animateClock();
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
