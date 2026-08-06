@@ -1185,7 +1185,7 @@ let vineProgress = 0;
 let flowerProgress = 0;
 let vineNodes = [];
 let flowers = [];
-let particles = [];
+let clockParticles = [];
 let clockTime = 0;
 let traceSpeed = 0.012; // radians per frame
 
@@ -1202,7 +1202,7 @@ function startClock() {
   flowerProgress = 0;
   vineNodes = [];
   flowers = [];
-  particles = [];
+  clockParticles = [];
   document.getElementById('clockBtn').textContent = '⏳ 时光流转中...';
   document.getElementById('clockBtn').style.pointerEvents = 'none';
   document.getElementById('clockBtn').style.opacity = '0.5';
@@ -1219,7 +1219,7 @@ function resetClock() {
   flowerProgress = 0;
   vineNodes = [];
   flowers = [];
-  particles = [];
+  clockParticles = [];
   document.getElementById('clockBtn').textContent = '✨ 开始';
   document.getElementById('clockBtn').style.pointerEvents = 'auto';
   document.getElementById('clockBtn').style.opacity = '1';
@@ -1393,7 +1393,7 @@ function spawnWordParticles(idx) {
   const px = CCX + Math.cos(angle) * TRACE_R;
   const py = CCY + Math.sin(angle) * TRACE_R;
   for (let i = 0; i < 8; i++) {
-    particles.push({
+    clockParticles.push({
       x: px, y: py,
       vx: Math.cos(angle) * (Math.random() * 2 + 1),
       vy: Math.sin(angle) * (Math.random() * 2 + 1),
@@ -1519,8 +1519,8 @@ function drawFlowers() {
 }
 
 function drawParticles() {
-  particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.life--; return p.life > 0; });
-  particles.forEach(p => {
+  clockParticles = clockParticles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.96; p.vy *= 0.96; p.life--; return p.life > 0; });
+  clockParticles.forEach(p => {
     clockCtx.globalAlpha = p.life / 45;
     clockCtx.fillStyle = p.color;
     clockCtx.beginPath();
