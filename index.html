@@ -315,33 +315,38 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
-/* ===== Decision Wheel ===== */
-.wheel-wrapper{max-width:480px;margin:0 auto;text-align:center}
-.wheel-stage{position:relative;width:340px;height:340px;margin:0 auto 20px}
-.wheel-canvas{width:100%;height:100%;cursor:pointer}
-.wheel-canvas:hover{filter:brightness(1.03)}
-@media(max-width:400px){.wheel-stage{width:280px;height:280px}}
-.wheel-pointer{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
-  width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;
-  border-top:32px solid var(--sky-dark);z-index:2;
-  filter:drop-shadow(0 3px 6px rgba(44,62,80,.25));transition:transform .2s ease}
-.wheel-spinning .wheel-pointer{animation:pointerVibrate .1s ease-in-out infinite}
-@keyframes pointerVibrate{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(3px)}}
-.wheel-result{font-size:22px;font-weight:800;color:var(--navy);min-height:36px;
-  margin:12px 0;transition:all .3s ease}
-.wheel-result.bounce{animation:resultBounce .5s ease}
-@keyframes resultBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.wheel-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
-.wheel-presets button{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);
-  background:var(--warm-white);cursor:pointer;font-size:13px;font-weight:600;
-  color:var(--text-secondary);transition:all .2s}
-.wheel-presets button:hover,.wheel-presets button.active{border-color:var(--sky);background:var(--sky-light);color:var(--sky-dark)}
-.wheel-input-row{display:flex;gap:8px;justify-content:center;margin-top:10px}
-.wheel-input-row input{flex:1;max-width:280px;padding:10px 14px;border-radius:100px;
-  border:1.5px solid var(--border);font-size:13px;font-family:var(--font-sans);
-  background:var(--warm-white);outline:none;transition:border-color .2s}
-.wheel-input-row input:focus{border-color:var(--sky)}
-.wheel-input-row button{padding:10px 18px}
+/* ===== Growth Vine ===== */
+.vine-wrapper{max-width:560px;margin:0 auto;text-align:center}
+.vine-canvas{width:100%;height:420px;border-radius:var(--radius-xl);
+  background:linear-gradient(180deg,#E8F2FA 0%,#F5F0E8 70%,#E8D5C0 100%);
+  display:block;box-shadow:var(--shadow);cursor:default}
+@media(max-width:600px){.vine-canvas{height:340px}}
+.vine-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.vine-btn{padding:12px 22px;border-radius:100px;border:2px solid var(--border);
+  background:var(--warm-white);cursor:pointer;font-size:14px;font-weight:700;
+  color:var(--text-secondary);transition:all .3s ease;position:relative;overflow:hidden}
+.vine-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.vine-btn:active{transform:scale(.95)}
+.vine-btn.water{border-color:#7CB3E8;color:#5A8FBF}
+.vine-btn.water:hover{background:#E8F2FA;box-shadow:0 6px 20px rgba(124,179,232,.25)}
+.vine-btn.sun{border-color:#D4A853;color:#B8933A}
+.vine-btn.sun:hover{background:#FBF3E4;box-shadow:0 6px 20px rgba(212,168,83,.25)}
+.vine-btn.nutrient{border-color:#6B9B6F;color:#4A7A4E}
+.vine-btn.nutrient:hover{background:#EDF5EE;box-shadow:0 6px 20px rgba(107,155,111,.25)}
+.vine-btn.mentor{border-color:#C07080;color:#A05060}
+.vine-btn.mentor:hover{background:#FDF0F3;box-shadow:0 6px 20px rgba(192,112,128,.25)}
+.vine-btn .vb-icon{font-size:20px;margin-right:4px}
+.vine-btn .vb-cooldown{position:absolute;bottom:0;left:0;height:3px;
+  background:currentColor;opacity:.3;transition:width .1s linear;border-radius:0 0 100px 100px}
+.vine-message{font-size:16px;font-weight:600;color:var(--text-secondary);min-height:28px;
+  margin:6px 0;transition:all .5s ease}
+.vine-message.highlight{color:var(--sky-dark);animation:msgPop .6s ease}
+@keyframes msgPop{0%{transform:scale(.9);opacity:.5}50%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+.vine-meter{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px}
+.vine-meter-bar{width:200px;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+.vine-meter-fill{height:100%;background:linear-gradient(90deg,#7CB3E8,#6B9B6F,#D4A853);border-radius:3px;
+  transition:width .8s cubic-bezier(.25,.8,.25,1.2)}
+.vine-meter-text{font-size:12px;font-weight:700;color:var(--text-muted)}
 
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
@@ -561,7 +566,7 @@ ul{list-style:none}
       <a href="#projects">项目</a>
       <a href="#internship">实习</a>
       <a href="#skills">技能</a>
-      <a href="#game">小工具</a>
+      <a href="#game">成长</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -954,29 +959,34 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ===== Decision Wheel ===== -->
+<!-- ===== Growth Vine ===== -->
 <section class="section section-alt" id="game">
   <div class="section-header reveal">
-    <div class="section-label">Tool</div>
-    <h2 class="section-title">决策转盘</h2>
-    <p class="section-desc">选择恐惧症的救星——转一下，帮你做决定</p>
+    <div class="section-label">Grow</div>
+    <h2 class="section-title">成长藤蔓</h2>
+    <p class="section-desc">每一次浇灌、每一缕阳光、每一位伯乐，都让你更加茁壮</p>
   </div>
-  <div class="wheel-wrapper reveal reveal-delay-1">
-    <div class="wheel-presets">
-      <button class="active" onclick="setWheelPreset('food')">🍜 今天吃什么</button>
-      <button onclick="setWheelPreset('weekend')">🌿 周末去哪</button>
-      <button onclick="setWheelPreset('movie')">🎬 看什么电影</button>
-      <button onclick="setWheelPreset('custom')">✏️ 自定义</button>
+  <div class="vine-wrapper reveal reveal-delay-1">
+    <canvas class="vine-canvas" id="vineCanvas" width="1120" height="840"></canvas>
+    <div class="vine-message" id="vineMessage">🌰 一颗种子，埋下希望</div>
+    <div class="vine-meter">
+      <span style="font-size:13px">🌱</span>
+      <div class="vine-meter-bar"><div class="vine-meter-fill" id="vineMeterFill" style="width:3%"></div></div>
+      <span class="vine-meter-text" id="vineMeterText">3%</span>
     </div>
-    <div class="wheel-stage">
-      <div class="wheel-pointer"></div>
-      <canvas class="wheel-canvas" id="wheelCanvas" width="600" height="600"></canvas>
-    </div>
-    <div class="wheel-result" id="wheelResult"></div>
-    <button class="btn btn-primary" id="wheelSpinBtn" onclick="spinWheel()">🎯 转一转</button>
-    <div class="wheel-input-row" id="wheelInputRow" style="display:none">
-      <input type="text" id="wheelCustomInput" placeholder="输入选项，用逗号分隔（如：火锅,日料,烧烤）">
-      <button class="btn btn-outline" onclick="applyCustomWheel()">确定</button>
+    <div class="vine-actions" id="vineActions">
+      <button class="vine-btn water" onclick="vineAction('water')">
+        <span class="vb-icon">💧</span> 浇水
+      </button>
+      <button class="vine-btn sun" onclick="vineAction('sun')">
+        <span class="vb-icon">☀️</span> 阳光
+      </button>
+      <button class="vine-btn nutrient" onclick="vineAction('nutrient')">
+        <span class="vb-icon">🌱</span> 养分
+      </button>
+      <button class="vine-btn mentor" onclick="vineAction('mentor')">
+        <span class="vb-icon">🤝</span> 伯乐
+      </button>
     </div>
   </div>
 </section>
@@ -1190,228 +1200,348 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== Decision Wheel =====
-const wheelCanvas = document.getElementById('wheelCanvas');
-const wheelCtx = wheelCanvas.getContext('2d');
-const WHEEL_R = 270;
-const WHEEL_CX = 300;
-const WHEEL_CY = 300;
+// ===== Growth Vine =====
+const vineCanvas = document.getElementById('vineCanvas');
+const vineCtx = vineCanvas.getContext('2d');
+const VW = vineCanvas.width;
+const VH = vineCanvas.height;
 
-const WHEEL_PRESETS = {
-  food: ['火锅 🍲','日料 🍣','麻辣烫 🌶️','汉堡 🍔','轻食沙拉 🥗','烤肉 🥩','螺蛳粉 🍜','披萨 🍕'],
-  weekend: ['公园散步 🌳','看展 🎨','咖啡馆 ☕','爬山 ⛰️','宅家追剧 📺','逛书店 📚','骑行 🚲','逛超市 🛒'],
-  movie: ['悬疑片 🔍','喜剧片 😂','科幻片 🚀','动画片 🎬','爱情片 💕','纪录片 🌍','恐怖片 👻','文艺片 🎭'],
-  custom: ['选项A','选项B','选项C','选项D','选项E','选项F','选项G','选项H']
-};
+let vineGrowth = 3; // 0-100
+let vineLeaves = [];
+let vineBranches = [];
+let vineFlowers = [];
+let vineParticles = [];
+let vineTime = 0;
+let vineCooldowns = { water: 0, sun: 0, nutrient: 0, mentor: 0 };
 
-let wheelOptions = WHEEL_PRESETS.food;
-let wheelSpinning = false;
-let wheelAngle = 0;
-let wheelHoverAngle = 0;
-let wheelIdleDrift = 0;
-
-// Rich color theme — alternating warm/cool pairs
-const WHEEL_PALETTES = [
-  ['#5B9BD5','#7CB3E8'], ['#E8A840','#F0C878'],
-  ['#5EA868','#7DBD87'], ['#D4886A','#E8B098'],
-  ['#6B8EC8','#90B0E0'], ['#C89850','#E0C080'],
-  ['#4E9068','#6EB080'], ['#C07080','#E098A8'],
+const MILESTONES = [
+  { pct: 15, msg: '🌱 嫩芽破土，新的开始' },
+  { pct: 30, msg: '🌿 藤蔓初成，向阳而生' },
+  { pct: 50, msg: '🍃 枝叶舒展，不惧风雨' },
+  { pct: 70, msg: '🌺 含苞待放，静待花开' },
+  { pct: 90, msg: '🌸 繁花似锦，未来可期' },
 ];
+let milestoneReached = new Set();
 
-function drawWheel() {
-  const n = wheelOptions.length;
-  const sliceAngle = (2 * Math.PI) / n;
-  wheelCtx.clearRect(0, 0, 600, 600);
+const GROWTH_RATES = { water: 8, sun: 6, nutrient: 5, mentor: 12 };
+const COOLDOWNS = { water: 3000, sun: 2500, nutrient: 2000, mentor: 5000 };
 
-  // Outer glow ring
-  wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R + 8, 0, 2 * Math.PI);
-  wheelCtx.fillStyle = 'rgba(0,0,0,.06)';
-  wheelCtx.fill();
+function vineAction(type) {
+  if (vineCooldowns[type] > Date.now()) return;
+  if (vineGrowth >= 100) return;
 
-  // Outer ring with tick marks
-  wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R + 3, 0, 2 * Math.PI);
-  wheelCtx.strokeStyle = 'rgba(255,255,255,.8)';
-  wheelCtx.lineWidth = 6;
-  wheelCtx.stroke();
+  vineCooldowns[type] = Date.now() + COOLDOWNS[type];
+  const btn = document.querySelector(`.vine-btn.${type}`);
+  const bar = document.createElement('div');
+  bar.className = 'vb-cooldown';
+  bar.style.width = '100%';
+  btn.appendChild(bar);
 
-  // Tick marks
-  for (let i = 0; i < n; i++) {
-    const tickAngle = wheelAngle + i * sliceAngle;
-    const x1 = WHEEL_CX + Math.cos(tickAngle) * (WHEEL_R - 5);
-    const y1 = WHEEL_CY + Math.sin(tickAngle) * (WHEEL_R - 5);
-    const x2 = WHEEL_CX + Math.cos(tickAngle) * (WHEEL_R + 8);
-    const y2 = WHEEL_CY + Math.sin(tickAngle) * (WHEEL_R + 8);
-    wheelCtx.beginPath();
-    wheelCtx.moveTo(x1, y1);
-    wheelCtx.lineTo(x2, y2);
-    wheelCtx.strokeStyle = '#fff';
-    wheelCtx.lineWidth = 2.5;
-    wheelCtx.stroke();
+  const startTime = Date.now();
+  const duration = COOLDOWNS[type];
+  function updateBar() {
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, 1 - elapsed / duration);
+    bar.style.width = (remaining * 100) + '%';
+    if (remaining > 0) requestAnimationFrame(updateBar);
+    else bar.remove();
   }
+  requestAnimationFrame(updateBar);
 
-  for (let i = 0; i < n; i++) {
-    const startAngle = wheelAngle + i * sliceAngle;
-    const endAngle = startAngle + sliceAngle;
+  vineGrowth = Math.min(100, vineGrowth + GROWTH_RATES[type]);
+  spawnGrowthParticles(type);
 
-    // Gradient slice
-    const midAngle = startAngle + sliceAngle / 2;
-    const [c1, c2] = WHEEL_PALETTES[i % WHEEL_PALETTES.length];
-    const gradX = WHEEL_CX + Math.cos(midAngle) * WHEEL_R * .5;
-    const gradY = WHEEL_CY + Math.sin(midAngle) * WHEEL_R * .5;
+  // Spawn leaves/branches/flowers based on growth
+  if (vineGrowth > 10 && Math.random() < .7) addLeaf();
+  if (vineGrowth > 30 && Math.random() < .4) addBranch();
+  if (vineGrowth > 60 && Math.random() < .5) addFlower();
 
-    wheelCtx.beginPath();
-    wheelCtx.moveTo(WHEEL_CX, WHEEL_CY);
-    wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R, startAngle, endAngle);
-    wheelCtx.closePath();
-    const grad = wheelCtx.createRadialGradient(WHEEL_CX, WHEEL_CY, WHEEL_R * .2, WHEEL_CX, WHEEL_CY, WHEEL_R);
-    grad.addColorStop(0, c1);
-    grad.addColorStop(1, c2);
-    wheelCtx.fillStyle = grad;
-    wheelCtx.fill();
+  updateVineDisplay();
+  checkMilestones();
+}
 
-    // Slice border
-    wheelCtx.strokeStyle = 'rgba(255,255,255,.5)';
-    wheelCtx.lineWidth = 2;
-    wheelCtx.stroke();
-
-    // Text with shadow
-    const textAngle = startAngle + sliceAngle / 2;
-    const textR = WHEEL_R * .72;
-    wheelCtx.save();
-    wheelCtx.translate(WHEEL_CX + Math.cos(textAngle) * textR, WHEEL_CY + Math.sin(textAngle) * textR);
-    wheelCtx.rotate(textAngle + Math.PI / 2);
-    wheelCtx.font = 'bold 22px -apple-system, "PingFang SC", sans-serif';
-    wheelCtx.textAlign = 'center';
-
-    // Text shadow
-    wheelCtx.fillStyle = 'rgba(0,0,0,.18)';
-    const label = wheelOptions[i];
-    // Single line, trim if needed
-    let displayText = label;
-    if (displayText.length > 10) displayText = displayText.substring(0, 10) + '…';
-    wheelCtx.fillText(displayText, 1, 4);
-    // Text
-    wheelCtx.fillStyle = '#fff';
-    wheelCtx.fillText(displayText, 0, 3);
-    wheelCtx.restore();
+function spawnGrowthParticles(type) {
+  const colors = { water: ['#7CB3E8','#A8D0F0','#fff'], sun: ['#D4A853','#F0D878','#FFF8DC'], nutrient: ['#6B9B6F','#90C090','#C8E8C0'], mentor: ['#E8A0B0','#F0C0D0','#FFF0F5'] };
+  const cols = colors[type];
+  for (let i = 0; i < 10; i++) {
+    vineParticles.push({
+      x: VW * .3 + Math.random() * VW * .4,
+      y: VH * .6 + Math.random() * VH * .25,
+      vx: (Math.random() - .5) * 3,
+      vy: -(Math.random() * 4 + 2),
+      life: 40 + Math.random() * 30,
+      color: cols[Math.floor(Math.random() * cols.length)],
+      size: Math.random() * 3 + 1
+    });
   }
-
-  // Inner ring
-  wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R * .18, 0, 2 * Math.PI);
-  wheelCtx.fillStyle = '#fff';
-  wheelCtx.fill();
-  wheelCtx.strokeStyle = 'rgba(0,0,0,.08)';
-  wheelCtx.lineWidth = 2;
-  wheelCtx.stroke();
-
-  // Center circle
-  const centerGrad = wheelCtx.createRadialGradient(WHEEL_CX-6, WHEEL_CY-6, 3, WHEEL_CX, WHEEL_CY, 44);
-  centerGrad.addColorStop(0, '#fff');
-  centerGrad.addColorStop(1, '#E8E3DA');
-  wheelCtx.beginPath();
-  wheelCtx.arc(WHEEL_CX, WHEEL_CY, 44, 0, 2 * Math.PI);
-  wheelCtx.fillStyle = centerGrad;
-  wheelCtx.fill();
-  wheelCtx.strokeStyle = 'rgba(0,0,0,.1)';
-  wheelCtx.lineWidth = 1.5;
-  wheelCtx.stroke();
-
-  // Center text
-  wheelCtx.fillStyle = '#2C3E50';
-  wheelCtx.font = 'bold 20px -apple-system, "PingFang SC", sans-serif';
-  wheelCtx.textAlign = 'center';
-  wheelCtx.textBaseline = 'middle';
-  wheelCtx.fillText('GO', WHEEL_CX, WHEEL_CY);
 }
 
-drawWheel();
-
-// Idle animation — subtle breathing rotation
-function idleAnimate() {
-  if (wheelSpinning) { requestAnimationFrame(idleAnimate); return; }
-  wheelIdleDrift += .0004;
-  wheelAngle += Math.sin(wheelIdleDrift) * .001;
-  drawWheel();
-  requestAnimationFrame(idleAnimate);
-}
-idleAnimate();
-
-// Click on canvas center to spin
-wheelCanvas.addEventListener('click', (e) => {
-  const rect = wheelCanvas.getBoundingClientRect();
-  const sx = 600 / rect.width;
-  const sy = 600 / rect.height;
-  const mx = (e.clientX - rect.left) * sx;
-  const my = (e.clientY - rect.top) * sy;
-  const dist = Math.sqrt((mx - WHEEL_CX) ** 2 + (my - WHEEL_CY) ** 2);
-  if (dist < 55) spinWheel();
-});
-
-function setWheelPreset(type) {
-  if (wheelSpinning) return;
-  wheelOptions = [...WHEEL_PRESETS[type]];
-  document.querySelectorAll('.wheel-presets button').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.wheel-presets button[onclick*="${type}"]`)?.classList.add('active');
-  document.getElementById('wheelInputRow').style.display = type === 'custom' ? 'flex' : 'none';
-  document.getElementById('wheelResult').textContent = '';
-  drawWheel();
+function addLeaf() {
+  const branchIdx = vineBranches.length > 0 ? Math.floor(Math.random() * vineBranches.length) : -1;
+  vineLeaves.push({
+    branchIdx,
+    t: Math.random() * .8 + .1,
+    side: Math.random() > .5 ? 1 : -1,
+    size: Math.random() * .5 + .5,
+    sway: Math.random() * Math.PI * 2,
+    hue: 100 + Math.random() * 40
+  });
 }
 
-function applyCustomWheel() {
-  const input = document.getElementById('wheelCustomInput').value.trim();
-  if (!input) return;
-  wheelOptions = input.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
-  if (wheelOptions.length < 2) return;
-  if (wheelOptions.length > 10) wheelOptions = wheelOptions.slice(0, 10);
-  WHEEL_PRESETS.custom = [...wheelOptions];
-  drawWheel();
-  document.getElementById('wheelResult').textContent = '';
+function addBranch() {
+  vineBranches.push({
+    t: Math.random() * .6 + .2,
+    side: Math.random() > .5 ? 1 : -1,
+    length: Math.random() * .4 + .2,
+    angle: (Math.random() * .5 + .3) * (Math.random() > .5 ? 1 : -1),
+    curve: Math.random() * .3
+  });
 }
 
-function spinWheel() {
-  if (wheelSpinning) return;
-  wheelSpinning = true;
-  document.querySelector('.wheel-stage').classList.add('wheel-spinning');
-  document.getElementById('wheelSpinBtn').textContent = '🎰 转动中...';
-  document.getElementById('wheelResult').textContent = '';
-  document.getElementById('wheelResult').classList.remove('bounce');
+function addFlower() {
+  vineFlowers.push({
+    branchIdx: vineBranches.length > 0 ? Math.floor(Math.random() * vineBranches.length) : -1,
+    t: Math.random() * .6 + .3,
+    side: Math.random() > .5 ? 1 : -1,
+    size: Math.random() * .4 + .6,
+    hue: Math.random() < .5 ? 330 + Math.random() * 30 : 20 + Math.random() * 25
+  });
+}
 
-  const spins = 5 + Math.random() * 6;
-  const totalAngle = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
-  const duration = 2800 + Math.random() * 1400;
-  const startAngle = wheelAngle;
-  const startTime = performance.now();
-
-  function animate(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3.5);
-    wheelAngle = startAngle + totalAngle * eased;
-    drawWheel();
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      const n = wheelOptions.length;
-      const sliceAngle = (2 * Math.PI) / n;
-      const normalizedAngle = ((wheelAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      const pointerAngle = (2 * Math.PI - normalizedAngle + Math.PI / 2) % (2 * Math.PI);
-      const idx = Math.floor(pointerAngle / sliceAngle);
-      const result = wheelOptions[idx % n];
-
-      wheelSpinning = false;
-      document.querySelector('.wheel-stage').classList.remove('wheel-spinning');
-      document.getElementById('wheelSpinBtn').textContent = '🎯 再转一次';
-      const resultEl = document.getElementById('wheelResult');
-      resultEl.textContent = '👉 ' + result;
-      resultEl.classList.add('bounce');
+function checkMilestones() {
+  MILESTONES.forEach(m => {
+    if (vineGrowth >= m.pct && !milestoneReached.has(m.pct)) {
+      milestoneReached.add(m.pct);
+      const msgEl = document.getElementById('vineMessage');
+      msgEl.textContent = m.msg;
+      msgEl.classList.remove('highlight');
+      void msgEl.offsetWidth;
+      msgEl.classList.add('highlight');
     }
-  }
-  requestAnimationFrame(animate);
+  });
 }
+
+function updateVineDisplay() {
+  document.getElementById('vineMeterFill').style.width = vineGrowth + '%';
+  document.getElementById('vineMeterText').textContent = vineGrowth + '%';
+}
+
+// Auto passive growth (very slow)
+setInterval(() => {
+  if (vineGrowth < 100) {
+    vineGrowth = Math.min(100, vineGrowth + .3);
+    if (vineGrowth > 15 && Math.random() < .15) addLeaf();
+    if (vineGrowth > 40 && Math.random() < .08) addBranch();
+    if (vineGrowth > 70 && Math.random() < .06) addFlower();
+    updateVineDisplay();
+    checkMilestones();
+  }
+}, 2000);
+
+function drawVineScene() {
+  vineCtx.clearRect(0, 0, VW, VH);
+  vineTime += .016;
+
+  const groundY = VH * .78;
+  const stemBaseX = VW * .45;
+  const stemBaseY = groundY;
+
+  // Sky gradient
+  const skyGrad = vineCtx.createLinearGradient(0, 0, 0, groundY);
+  skyGrad.addColorStop(0, '#E8F2FA');
+  skyGrad.addColorStop(.6, '#F5F0E8');
+  skyGrad.addColorStop(1, '#E8D5C0');
+  vineCtx.fillStyle = skyGrad;
+  vineCtx.fillRect(0, 0, VW, groundY);
+
+  // Ground / soil
+  vineCtx.fillStyle = '#C8A882';
+  vineCtx.fillRect(0, groundY, VW, VH - groundY);
+  vineCtx.fillStyle = '#B8956E';
+  vineCtx.beginPath();
+  vineCtx.ellipse(VW * .45, groundY, VW * .35, 18, 0, Math.PI, 0);
+  vineCtx.fill();
+
+  // Soil details
+  vineCtx.fillStyle = '#A07850';
+  for (let i = 0; i < 12; i++) {
+    const sx = VW * .2 + Math.random() * VW * .5;
+    const sy = groundY + 5 + Math.random() * 30;
+    vineCtx.beginPath();
+    vineCtx.arc(sx, sy, Math.random() * 4 + 2, 0, Math.PI * 2);
+    vineCtx.fill();
+  }
+
+  // Small stones
+  vineCtx.fillStyle = '#D0C0B0';
+  [
+    [VW * .3, groundY + 8, 6],
+    [VW * .55, groundY + 12, 4],
+    [VW * .65, groundY + 6, 7],
+    [VW * .25, groundY + 18, 3]
+  ].forEach(([sx, sy, sr]) => {
+    vineCtx.beginPath();
+    vineCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+    vineCtx.fill();
+  });
+
+  // Main stem
+  const stemGrow = vineGrowth / 100;
+  const stemHeight = VH * .7 * stemGrow;
+  const stemSegments = 40;
+  const stemWidth = 3 + stemGrow * 6;
+
+  vineCtx.strokeStyle = '#5A8A50';
+  vineCtx.lineWidth = stemWidth;
+  vineCtx.lineCap = 'round';
+  vineCtx.beginPath();
+  vineCtx.moveTo(stemBaseX, stemBaseY);
+
+  for (let i = 0; i <= stemSegments; i++) {
+    const t = i / stemSegments;
+    const x = stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t;
+    const y = stemBaseY - t * stemHeight;
+    vineCtx.lineTo(x, y);
+  }
+  vineCtx.stroke();
+
+  // Stem highlight
+  vineCtx.strokeStyle = 'rgba(255,255,255,.15)';
+  vineCtx.lineWidth = stemWidth * .3;
+  vineCtx.beginPath();
+  vineCtx.moveTo(stemBaseX + 2, stemBaseY);
+  for (let i = 0; i <= stemSegments; i++) {
+    const t = i / stemSegments;
+    const x = stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t + 2;
+    const y = stemBaseY - t * stemHeight;
+    vineCtx.lineTo(x, y);
+  }
+  vineCtx.stroke();
+
+  // Get stem position at any t
+  function stemPos(t) {
+    return {
+      x: stemBaseX + Math.sin(t * 2.5 + vineTime * .3) * 15 * t,
+      y: stemBaseY - t * stemHeight
+    };
+  }
+
+  // Draw branches
+  vineBranches.forEach(b => {
+    const sp = stemPos(b.t);
+    const bx = sp.x + b.side * 20;
+    const by = sp.y;
+    const len = stemHeight * b.length;
+    const angle = b.side * b.angle;
+
+    vineCtx.strokeStyle = '#5A8A50';
+    vineCtx.lineWidth = 2 + stemGrow * 2;
+    vineCtx.beginPath();
+    vineCtx.moveTo(sp.x, sp.y);
+    vineCtx.quadraticCurveTo(
+      sp.x + b.side * len * .6,
+      sp.y - len * .4,
+      sp.x + Math.cos(angle) * len + Math.sin(b.curve + vineTime * .2) * len * .3,
+      sp.y - len * .7
+    );
+    vineCtx.stroke();
+  });
+
+  // Draw leaves
+  vineLeaves.forEach(leaf => {
+    let sp;
+    if (leaf.branchIdx >= 0 && leaf.branchIdx < vineBranches.length) {
+      const b = vineBranches[leaf.branchIdx];
+      const bsp = stemPos(b.t);
+      const len = stemHeight * b.length;
+      const angle = b.side * b.angle;
+      sp = {
+        x: bsp.x + Math.cos(angle) * len * leaf.t + Math.sin(b.curve + vineTime * .2) * len * .3 * leaf.t,
+        y: bsp.y - len * .7 * leaf.t
+      };
+    } else {
+      sp = stemPos(leaf.t);
+    }
+
+    const sway = Math.sin(leaf.sway + vineTime * 1.5) * 4;
+    vineCtx.save();
+    vineCtx.translate(sp.x, sp.y);
+    vineCtx.rotate(leaf.side * .5 + sway * .05);
+    vineCtx.fillStyle = `hsl(${leaf.hue},55%,${35 + leaf.size * 15}%)`;
+    vineCtx.beginPath();
+    vineCtx.ellipse(0, 0, 10 * leaf.size, 6 * leaf.size, leaf.side * .3, 0, Math.PI * 2);
+    vineCtx.fill();
+    vineCtx.strokeStyle = `hsl(${leaf.hue},40%,25%)`;
+    vineCtx.lineWidth = .6;
+    vineCtx.stroke();
+    vineCtx.restore();
+  });
+
+  // Draw flowers
+  vineFlowers.forEach(flower => {
+    let sp;
+    if (flower.branchIdx >= 0 && flower.branchIdx < vineBranches.length) {
+      const b = vineBranches[flower.branchIdx];
+      const bsp = stemPos(b.t);
+      const len = stemHeight * b.length;
+      const angle = b.side * b.angle;
+      sp = {
+        x: bsp.x + Math.cos(angle) * len * flower.t,
+        y: bsp.y - len * .7 * flower.t
+      };
+    } else {
+      sp = stemPos(flower.t);
+    }
+
+    const size = 8 * flower.size;
+    vineCtx.save();
+    vineCtx.translate(sp.x, sp.y);
+    // Petals
+    for (let p = 0; p < 5; p++) {
+      const pa = (p / 5) * Math.PI * 2 + vineTime * .2;
+      vineCtx.fillStyle = `hsla(${flower.hue},70%,${65 + flower.size * 15}%,.8)`;
+      vineCtx.beginPath();
+      vineCtx.ellipse(Math.cos(pa) * size * .4, Math.sin(pa) * size * .4, size * .5, size * .25, pa, 0, Math.PI * 2);
+      vineCtx.fill();
+    }
+    // Center
+    vineCtx.fillStyle = '#F0D878';
+    vineCtx.beginPath();
+    vineCtx.arc(0, 0, size * .25, 0, Math.PI * 2);
+    vineCtx.fill();
+    vineCtx.restore();
+  });
+
+  // Seed at base (if early stage)
+  if (stemGrow < .15) {
+    vineCtx.fillStyle = '#8B6914';
+    vineCtx.beginPath();
+    vineCtx.ellipse(stemBaseX, groundY - 2, 8, 5, 0, 0, Math.PI * 2);
+    vineCtx.fill();
+  }
+
+  // Particles
+  vineParticles = vineParticles.filter(p => { p.life--; p.x += p.vx; p.y += p.vy; p.vy *= .97; return p.life > 0; });
+  vineParticles.forEach(p => {
+    vineCtx.globalAlpha = p.life / 70;
+    vineCtx.fillStyle = p.color;
+    vineCtx.beginPath();
+    vineCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    vineCtx.fill();
+  });
+  vineCtx.globalAlpha = 1;
+
+  // Title text at top
+  if (stemGrow > .9) {
+    vineCtx.fillStyle = 'rgba(44,62,80,.12)';
+    vineCtx.font = 'bold 28px -apple-system,"PingFang SC",sans-serif';
+    vineCtx.textAlign = 'center';
+    vineCtx.fillText('繁花似锦，未来可期', VW * .55, VH * .1);
+  }
+
+  requestAnimationFrame(drawVineScene);
+}
+drawVineScene();
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
