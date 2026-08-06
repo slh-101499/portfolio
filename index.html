@@ -943,13 +943,13 @@ ul{list-style:none}
   <div class="section-header reveal">
     <div class="section-label">Time</div>
     <h2 class="section-title">时间之圆</h2>
-    <p class="section-desc">分针画过的每一刻，都藏着一个关于成长的故事</p>
+    <p class="section-desc">分针画过的每一刻，都藏着一个故事</p>
   </div>
   <div class="clock-wrapper reveal reveal-delay-1">
     <canvas class="clock-canvas" id="clockCanvas" width="800" height="800"></canvas>
-    <div class="clock-message" id="clockMessage">🕐 点击开始，让时间诉说</div>
+    <div class="clock-message" id="clockMessage"></div>
     <div class="clock-btn-wrap">
-      <button class="clock-btn" id="clockBtn" onclick="startClock()">✨ 开始</button>
+      <button class="clock-btn" id="clockBtn" style="display:none">🔄 再看一次</button>
     </div>
   </div>
 </section>
@@ -1163,291 +1163,309 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== Poetic Clock =====
+// ===== Poetic Clock v2 =====
 const clockCanvas = document.getElementById('clockCanvas');
 const clockCtx = clockCanvas.getContext('2d');
 const CW = clockCanvas.width;
 const CH = clockCanvas.height;
 const CCX = CW / 2;
 const CCY = CH / 2;
-const CLOCK_R = 280;
-const TRACE_R = CLOCK_R - 20;
-
+const TRACE_R = 260;
 const WORDS = ['学习','成长','焦虑','压力','选择','迷茫','坚持','自由','热爱','遗憾','奔跑','沉默'];
 
-let clockState = 'idle';
+let clockState = 'idle'; // idle -> tracing -> done
 let minuteAngle = -Math.PI / 2;
 let hourAngle = -Math.PI / 2;
 let tracedArc = 0;
 let revealedWords = [];
-let vineProgress = 0;
-let flowerProgress = 0;
-let vineNodes = [];
-let flowers = [];
+let vineData = [];    // per-angle vine growth: {angle, vineGrow, leafGrow, flowerBloom, leafPhase, flowerPhase, flowerSize}
 let clockParticles = [];
 let clockTime = 0;
-let traceSpeed = 0.01;
+let hasStarted = false;
+let totalArcTarget = Math.PI * 2;
 
-function startClock() {
-  if (clockState === 'tracing' || clockState === 'blooming') return;
-  if (clockState === 'done') { resetClock(); return; }
+// Auto-start after a short delay
+setTimeout(() => {
+  if (!hasStarted) { hasStarted = true; clockState = 'tracing'; }
+}, 800);
+
+function resetClock() {
   clockState = 'tracing';
+  minuteAngle = -Math.PI / 2; hourAngle = -Math.PI / 2;
   tracedArc = 0; revealedWords = [];
-  vineProgress = 0; flowerProgress = 0;
-  vineNodes = []; flowers = []; clockParticles = [];
-  document.getElementById('clockBtn').textContent = '⏳ 时光流转中...';
-  document.getElementById('clockBtn').style.opacity = '0.5';
-  document.getElementById('clockBtn').style.pointerEvents = 'none';
+  vineData = []; clockParticles = [];
+  for (let i = 0; i < 60; i++) {
+    vineData.push({ angle: (i / 60) * Math.PI * 2, vineGrow: 0, leafGrow: 0, flowerBloom: 0, leafPhase: Math.random() * Math.PI * 2, flowerPhase: Math.random() * Math.PI * 2, flowerSize: 0.7 + Math.random() * 0.6 });
+  }
+  document.getElementById('clockBtn').style.display = 'none';
   document.getElementById('clockMessage').textContent = '';
 }
 
-function resetClock() {
-  clockState = 'idle';
-  minuteAngle = -Math.PI / 2; hourAngle = -Math.PI / 2;
-  tracedArc = 0; revealedWords = [];
-  vineProgress = 0; flowerProgress = 0;
-  vineNodes = []; flowers = []; clockParticles = [];
-  document.getElementById('clockBtn').textContent = '✨ 开始';
-  document.getElementById('clockBtn').style.opacity = '1';
-  document.getElementById('clockBtn').style.pointerEvents = 'auto';
-  document.getElementById('clockMessage').textContent = '🕐 点击开始，让时间诉说';
-}
-
-function drawClockFace() {
-  // Only 12 subtle dot markers — no outer ring at start
-  for (let i = 0; i < 12; i++) {
-    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-    const mx = CCX + Math.cos(angle) * TRACE_R;
-    const my = CCY + Math.sin(angle) * TRACE_R;
-    const r = i % 3 === 0 ? 2.5 : 1.5;
-    clockCtx.beginPath();
-    clockCtx.arc(mx, my, r, 0, Math.PI * 2);
-    clockCtx.fillStyle = '#D0C8B8';
-    clockCtx.fill();
-  }
-}
-
-function drawTracedArc() {
-  if (tracedArc <= 0.001) return;
-  // The traced circle — only the portion the minute hand has passed
-  clockCtx.beginPath();
-  clockCtx.arc(CCX, CCY, TRACE_R, -Math.PI / 2, -Math.PI / 2 + Math.min(tracedArc, Math.PI * 2));
-  clockCtx.strokeStyle = 'rgba(124,179,232,.5)';
-  clockCtx.lineWidth = 1.8;
-  clockCtx.stroke();
-
-  // Glowing dot at the current tip position
-  const tipX = CCX + Math.cos(-Math.PI / 2 + tracedArc) * TRACE_R;
-  const tipY = CCY + Math.sin(-Math.PI / 2 + tracedArc) * TRACE_R;
-  clockCtx.beginPath();
-  clockCtx.arc(tipX, tipY, 3.5, 0, Math.PI * 2);
-  clockCtx.fillStyle = 'rgba(124,179,232,.8)';
-  clockCtx.fill();
+// Initialize vine data
+for (let i = 0; i < 60; i++) {
+  vineData.push({ angle: (i / 60) * Math.PI * 2, vineGrow: 0, leafGrow: 0, flowerBloom: 0, leafPhase: Math.random() * Math.PI * 2, flowerPhase: Math.random() * Math.PI * 2, flowerSize: 0.7 + Math.random() * 0.6 });
 }
 
 function drawHands() {
-  // Hour hand — dark, shorter
-  const hLen = CLOCK_R * 0.5;
-  const hx = CCX + Math.cos(hourAngle) * hLen;
-  const hy = CCY + Math.sin(hourAngle) * hLen;
-  clockCtx.beginPath();
-  clockCtx.moveTo(CCX, CCY);
-  clockCtx.lineTo(hx, hy);
-  clockCtx.strokeStyle = '#5A6A7A';
-  clockCtx.lineWidth = 3;
-  clockCtx.lineCap = 'round';
-  clockCtx.stroke();
+  // Glow effect for hands
+  function drawGlowHand(angle, length, width, color, glowColor) {
+    // Outer glow
+    for (let g = 3; g >= 1; g--) {
+      const ex = CCX + Math.cos(angle) * length;
+      const ey = CCY + Math.sin(angle) * length;
+      clockCtx.beginPath();
+      clockCtx.moveTo(CCX, CCY);
+      clockCtx.lineTo(ex, ey);
+      clockCtx.strokeStyle = glowColor;
+      clockCtx.lineWidth = width + g * 4;
+      clockCtx.lineCap = 'round';
+      clockCtx.globalAlpha = 0.06 * (4 - g);
+      clockCtx.stroke();
+    }
+    clockCtx.globalAlpha = 1;
+    // Core hand
+    const ex = CCX + Math.cos(angle) * length;
+    const ey = CCY + Math.sin(angle) * length;
+    const grad = clockCtx.createLinearGradient(CCX, CCY, ex, ey);
+    grad.addColorStop(0, 'rgba(255,255,255,.95)');
+    grad.addColorStop(0.3, color);
+    grad.addColorStop(1, 'rgba(255,255,255,.6)');
+    clockCtx.beginPath();
+    clockCtx.moveTo(CCX, CCY);
+    clockCtx.lineTo(ex, ey);
+    clockCtx.strokeStyle = grad;
+    clockCtx.lineWidth = width;
+    clockCtx.lineCap = 'round';
+    clockCtx.stroke();
+  }
 
-  // Minute hand — blue, longer, reaches the trace ring
-  const mLen = TRACE_R;
-  const mx = CCX + Math.cos(minuteAngle) * mLen;
-  const my = CCY + Math.sin(minuteAngle) * mLen;
-  clockCtx.beginPath();
-  clockCtx.moveTo(CCX, CCY);
-  clockCtx.lineTo(mx, my);
-  clockCtx.strokeStyle = '#7CB3E8';
-  clockCtx.lineWidth = 2;
-  clockCtx.lineCap = 'round';
-  clockCtx.stroke();
+  // Hour hand
+  drawGlowHand(hourAngle, TRACE_R * 0.48, 2.2, 'rgba(220,210,200,.8)', 'rgba(200,180,160,.4)');
 
-  // Tip dot — the "pen" that draws the circle
+  // Minute hand
+  drawGlowHand(minuteAngle, TRACE_R, 1.8, 'rgba(200,210,225,.85)', 'rgba(150,170,200,.4)');
+
+  // Minute tip glow
+  const mx = CCX + Math.cos(minuteAngle) * TRACE_R;
+  const my = CCY + Math.sin(minuteAngle) * TRACE_R;
+  for (let g = 3; g >= 0; g--) {
+    clockCtx.beginPath();
+    clockCtx.arc(mx, my, 4 + g * 3, 0, Math.PI * 2);
+    clockCtx.fillStyle = 'rgba(200,210,230,.08)';
+    clockCtx.fill();
+  }
   clockCtx.beginPath();
-  clockCtx.arc(mx, my, 5, 0, Math.PI * 2);
-  clockCtx.fillStyle = '#7CB3E8';
+  clockCtx.arc(mx, my, 3.5, 0, Math.PI * 2);
+  clockCtx.fillStyle = 'rgba(255,255,255,.9)';
   clockCtx.fill();
-  clockCtx.strokeStyle = 'rgba(255,255,255,.6)';
-  clockCtx.lineWidth = 2;
-  clockCtx.stroke();
 
-  // Center dot
+  // Center glow
+  for (let g = 3; g >= 0; g--) {
+    clockCtx.beginPath();
+    clockCtx.arc(CCX, CCY, 3 + g * 2.5, 0, Math.PI * 2);
+    clockCtx.fillStyle = 'rgba(200,200,210,.07)';
+    clockCtx.fill();
+  }
   clockCtx.beginPath();
-  clockCtx.arc(CCX, CCY, 4, 0, Math.PI * 2);
-  clockCtx.fillStyle = '#2C3E50';
+  clockCtx.arc(CCX, CCY, 2.5, 0, Math.PI * 2);
+  clockCtx.fillStyle = 'rgba(255,255,255,.8)';
   clockCtx.fill();
+}
+
+function drawTracedArc() {
+  if (tracedArc <= 0.002) return;
+  // Glowing trail
+  clockCtx.beginPath();
+  clockCtx.arc(CCX, CCY, TRACE_R, -Math.PI / 2, -Math.PI / 2 + Math.min(tracedArc, Math.PI * 2));
+  clockCtx.strokeStyle = 'rgba(180,200,220,.4)';
+  clockCtx.lineWidth = 1.5;
+  clockCtx.stroke();
 }
 
 function drawWords() {
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-    const wordR = TRACE_R + 38;
+    const wordR = TRACE_R + 50;
     const wordX = CCX + Math.cos(angle) * wordR;
     const wordY = CCY + Math.sin(angle) * wordR;
     const wordAngle = (i / 12) * Math.PI * 2;
 
     let alpha = 0;
     if (revealedWords.includes(i)) {
-      alpha = 0.85;
-    } else if (clockState === 'idle') {
-      alpha = 0.12;
-    } else if (tracedArc > wordAngle) {
-      alpha = Math.min(0.7, (tracedArc - wordAngle) * 3);
+      alpha = 0.9;
+    } else if (clockState === 'tracing' && tracedArc > wordAngle) {
+      alpha = Math.min(0.75, (tracedArc - wordAngle) * 2.5);
+    } else if (clockState === 'tracing') {
+      alpha = 0.06;
     }
 
-    if (alpha < 0.03) continue;
+    if (alpha < 0.02) continue;
 
-    clockCtx.fillStyle = `rgba(44,62,80,${alpha})`;
-    clockCtx.font = 'bold 15px -apple-system,"PingFang SC",sans-serif';
+    // Varied font sizes — artistic, irregular
+    const sizes = [22, 16, 27, 18, 24, 20, 26, 17, 28, 19, 23, 15];
+    const baseSize = sizes[i];
+    const size = baseSize + (revealedWords.includes(i) ? Math.sin(clockTime * 2 + i) * 1.5 : 0);
+
+    clockCtx.save();
+    clockCtx.translate(wordX, wordY);
+    clockCtx.fillStyle = `rgba(60,70,85,${alpha})`;
+    clockCtx.font = `${Math.round(size)}px -apple-system,"PingFang SC",serif`;
     clockCtx.textAlign = 'center';
     clockCtx.textBaseline = 'middle';
-    clockCtx.fillText(WORDS[i], wordX, wordY);
+    clockCtx.fillText(WORDS[i], 0, 0);
+    clockCtx.restore();
   }
 }
 
 function updateClock() {
   if (clockState !== 'tracing') return;
-  tracedArc += traceSpeed;
+  tracedArc += 0.009;
   minuteAngle = -Math.PI / 2 + tracedArc;
   hourAngle = -Math.PI / 2 + tracedArc / 12;
 
+  // Check word reveals
   for (let i = 0; i < 12; i++) {
     const wordAngle = (i / 12) * Math.PI * 2;
     if (tracedArc >= wordAngle && !revealedWords.includes(i)) {
       revealedWords.push(i);
       spawnWordParticles(i);
-      document.getElementById('clockMessage').textContent = `${WORDS[i]}`;
+      document.getElementById('clockMessage').textContent = WORDS[i];
     }
+  }
+
+  // Grow vine along traced arc BEFORE circle is complete
+  const vineStart = Math.PI * 1.6; // Start growing when hand approaches 学习(12 o'clock) area again
+  if (tracedArc > vineStart) {
+    const vineZone = tracedArc - vineStart;
+    vineData.forEach(v => {
+      const va = v.angle;
+      // Map angle to how far it's been traced
+      const trailDist = (tracedArc - va + Math.PI * 2) % (Math.PI * 2);
+      if (trailDist < Math.PI * 2 && trailDist > 0) {
+        v.vineGrow = Math.min(1, v.vineGrow + 0.015);
+        v.leafGrow = Math.min(1, v.leafGrow + 0.012);
+      }
+    });
   }
 
   if (tracedArc >= Math.PI * 2) {
     tracedArc = Math.PI * 2;
-    minuteAngle = -Math.PI / 2 + Math.PI * 2;
-    clockState = 'blooming';
-    document.getElementById('clockMessage').textContent = '圆已成，静待花开';
-    generateVineNodes();
+    minuteAngle = -Math.PI / 2;
+    clockState = 'done';
+    document.getElementById('clockMessage').textContent = '时间画圆，生命开花';
+    document.getElementById('clockBtn').style.display = 'inline-flex';
+    document.getElementById('clockBtn').textContent = '🔄 再看一次';
+    document.getElementById('clockBtn').style.opacity = '1';
+    document.getElementById('clockBtn').style.pointerEvents = 'auto';
+    // Accelerate vine growth after completion
+    vineData.forEach(v => { v.vineGrow = 1; v.leafGrow = 1; v.flowerBloom = 1; });
   }
+
+  // Flowers bloom gradually
+  vineData.forEach(v => {
+    if (v.vineGrow > 0.6) v.flowerBloom = Math.min(1, v.flowerBloom + 0.005);
+  });
 }
 
 function spawnWordParticles(idx) {
   const angle = (idx / 12) * Math.PI * 2 - Math.PI / 2;
   const px = CCX + Math.cos(angle) * TRACE_R;
   const py = CCY + Math.sin(angle) * TRACE_R;
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     clockParticles.push({
       x: px, y: py,
-      vx: Math.cos(angle) * (Math.random() * 2 + 1),
-      vy: Math.sin(angle) * (Math.random() * 2 + 1),
-      life: 20 + Math.random() * 15,
-      size: Math.random() * 2 + 1,
-      color: Math.random() < .5 ? '#7CB3E8' : '#D4A853'
+      vx: (Math.random() - .5) * 3, vy: (Math.random() - .5) * 3 - 1,
+      life: 30 + Math.random() * 20, size: Math.random() * 2.5 + 1,
     });
-  }
-}
-
-function generateVineNodes() {
-  vineNodes = [];
-  for (let i = 0; i < 48; i++) {
-    const angle = (i / 48) * Math.PI * 2 - Math.PI / 2;
-    vineNodes.push({
-      x: CCX + Math.cos(angle) * TRACE_R,
-      y: CCY + Math.sin(angle) * TRACE_R,
-      angle, hasLeaf: i % 2 === 0, leafSize: 0,
-      leafPhase: Math.random() * Math.PI * 2
-    });
-  }
-  for (let i = 0; i < 12; i++) {
-    const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-    flowers.push({
-      x: CCX + Math.cos(angle) * TRACE_R,
-      y: CCY + Math.sin(angle) * TRACE_R,
-      bloom: 0, size: 0.9 + Math.random() * 0.3,
-      phase: Math.random() * Math.PI * 2
-    });
-  }
-}
-
-function updateBloom() {
-  if (clockState !== 'blooming') return;
-  vineProgress = Math.min(1, vineProgress + 0.008);
-  flowerProgress = Math.min(1, flowerProgress + 0.006);
-  vineNodes.forEach(n => { n.leafSize = Math.min(1, vineProgress * 1.5); });
-  flowers.forEach(f => { f.bloom = Math.max(0, Math.min(1, flowerProgress * 1.3 - 0.3)); });
-  if (flowerProgress >= 1) {
-    clockState = 'done';
-    document.getElementById('clockBtn').textContent = '🔄 再看一次';
-    document.getElementById('clockBtn').style.opacity = '1';
-    document.getElementById('clockBtn').style.pointerEvents = 'auto';
-    document.getElementById('clockMessage').textContent = '时间画圆，生命开花';
   }
 }
 
 function drawVines() {
-  if (vineNodes.length === 0) return;
-  // Vine winding along the traced arc
-  for (let i = 0; i < vineNodes.length; i++) {
-    const n = vineNodes[i];
-    const r = TRACE_R + Math.sin(i * 0.7 + clockTime * 0.4) * 4 * vineProgress;
-    const x = CCX + Math.cos(n.angle) * r;
-    const y = CCY + Math.sin(n.angle) * r;
-    if (i === 0) {
+  // Draw vine along the traced circle — winding, organic
+  vineData.forEach((v, i) => {
+    if (v.vineGrow < 0.03) return;
+    const r = TRACE_R + Math.sin(i * 0.4 + clockTime * 0.5) * 6 * v.vineGrow;
+    const x = CCX + Math.cos(v.angle) * r;
+    const y = CCY + Math.sin(v.angle) * r;
+
+    // Vine stem — thicker, visible green-brown
+    const nextI = (i + 1) % vineData.length;
+    const nextV = vineData[nextI];
+    if (nextV.vineGrow > 0.02) {
+      const nr = TRACE_R + Math.sin(nextI * 0.4 + clockTime * 0.5) * 6 * nextV.vineGrow;
+      const nx = CCX + Math.cos(nextV.angle) * nr;
+      const ny = CCY + Math.sin(nextV.angle) * nr;
       clockCtx.beginPath();
       clockCtx.moveTo(x, y);
-    } else {
-      clockCtx.lineTo(x, y);
+      clockCtx.lineTo(nx, ny);
+      clockCtx.strokeStyle = `rgba(90,145,75,${Math.min(v.vineGrow, nextV.vineGrow) * 0.7})`;
+      clockCtx.lineWidth = Math.min(v.vineGrow, nextV.vineGrow) * 3;
+      clockCtx.lineCap = 'round';
+      clockCtx.stroke();
     }
-  }
-  clockCtx.closePath();
-  clockCtx.strokeStyle = `rgba(100,160,90,${vineProgress * 0.55})`;
-  clockCtx.lineWidth = 2.2 * vineProgress;
-  clockCtx.lineCap = 'round';
-  clockCtx.lineJoin = 'round';
-  clockCtx.stroke();
 
-  // Leaves
-  vineNodes.forEach(n => {
-    if (!n.hasLeaf || n.leafSize < 0.05) return;
-    const r = TRACE_R + Math.sin(n.angle * 3 + clockTime * 0.4) * 4 * vineProgress;
-    const x = CCX + Math.cos(n.angle) * r;
-    const y = CCY + Math.sin(n.angle) * r;
-    const sway = Math.sin(clockTime * 1.8 + n.leafPhase) * 0.18;
-    clockCtx.save();
-    clockCtx.translate(x, y);
-    clockCtx.rotate(n.angle + Math.PI / 2 + sway);
-    clockCtx.fillStyle = `rgba(110,180,90,${n.leafSize * 0.65})`;
-    clockCtx.beginPath();
-    clockCtx.ellipse(0, 0, 8 * n.leafSize, 4.5 * n.leafSize, 0, 0, Math.PI * 2);
-    clockCtx.fill();
-    clockCtx.restore();
+    // Leaf at every other node
+    if (i % 2 === 0 && v.leafGrow > 0.05) {
+      const sway = Math.sin(clockTime * 2 + v.leafPhase) * 0.25;
+      clockCtx.save();
+      clockCtx.translate(x, y);
+      clockCtx.rotate(v.angle + Math.PI / 2 + sway);
+      clockCtx.fillStyle = `rgba(100,175,85,${v.leafGrow * 0.7})`;
+      clockCtx.beginPath();
+      const ls = 13 * v.leafGrow;
+      clockCtx.ellipse(0, 0, ls, ls * 0.5, 0, 0, Math.PI * 2);
+      clockCtx.fill();
+      // Vein
+      clockCtx.strokeStyle = `rgba(60,140,55,${v.leafGrow * 0.5})`;
+      clockCtx.lineWidth = 0.5;
+      clockCtx.beginPath();
+      clockCtx.moveTo(0, -ls * 0.45);
+      clockCtx.lineTo(0, ls * 0.45);
+      clockCtx.stroke();
+      clockCtx.restore();
+    }
   });
 }
 
 function drawFlowers() {
-  flowers.forEach(f => {
-    if (f.bloom < 0.03) return;
-    const sway = Math.sin(clockTime * 1.3 + f.phase) * 0.05;
+  vineData.forEach((v, i) => {
+    // Flowers at hour positions (every 5th node)
+    if (i % 5 !== 0 || v.flowerBloom < 0.03) return;
+    const r = TRACE_R + Math.sin(i * 0.4 + clockTime * 0.5) * 6;
+    const x = CCX + Math.cos(v.angle) * r;
+    const y = CCY + Math.sin(v.angle) * r;
+    const sway = Math.sin(clockTime * 1.5 + v.flowerPhase) * 0.08;
+    const breathe = 1 + Math.sin(clockTime * 0.8 + v.flowerPhase) * 0.12;
+
     clockCtx.save();
-    clockCtx.translate(f.x, f.y);
+    clockCtx.translate(x, y);
     clockCtx.rotate(sway);
+    clockCtx.scale(breathe * v.flowerBloom, breathe * v.flowerBloom);
+
+    // 5 petals, white with pinkish tips
     for (let p = 0; p < 5; p++) {
       const pa = (p / 5) * Math.PI * 2;
-      clockCtx.fillStyle = `rgba(255,252,248,${f.bloom * 0.85})`;
+      clockCtx.fillStyle = 'rgba(255,250,248,.9)';
       clockCtx.beginPath();
-      clockCtx.ellipse(Math.cos(pa) * 6 * f.bloom * f.size, Math.sin(pa) * 6 * f.bloom * f.size, 9 * f.bloom * f.size, 5 * f.bloom * f.size, pa, 0, Math.PI * 2);
+      const ps = 8 * v.flowerSize;
+      clockCtx.ellipse(Math.cos(pa) * ps * 0.55, Math.sin(pa) * ps * 0.55, ps, ps * 0.45, pa, 0, Math.PI * 2);
       clockCtx.fill();
     }
-    clockCtx.fillStyle = `rgba(240,190,60,${f.bloom})`;
+    // Inner petals — slightly smaller, pink tint
+    for (let p = 0; p < 5; p++) {
+      const pa = (p / 5) * Math.PI * 2 + 0.3;
+      clockCtx.fillStyle = 'rgba(255,245,242,.6)';
+      clockCtx.beginPath();
+      const ps = 5 * v.flowerSize;
+      clockCtx.ellipse(Math.cos(pa) * ps * 0.4, Math.sin(pa) * ps * 0.4, ps, ps * 0.4, pa, 0, Math.PI * 2);
+      clockCtx.fill();
+    }
+    // Yellow center
+    clockCtx.fillStyle = 'rgba(245,195,70,.9)';
     clockCtx.beginPath();
-    clockCtx.arc(0, 0, 3.5 * f.bloom, 0, Math.PI * 2);
+    clockCtx.arc(0, 0, 3.5 * v.flowerSize, 0, Math.PI * 2);
     clockCtx.fill();
+
     clockCtx.restore();
   });
 }
@@ -1455,8 +1473,8 @@ function drawFlowers() {
 function drawParticles() {
   clockParticles = clockParticles.filter(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.95; p.vy *= 0.95; p.life--; return p.life > 0; });
   clockParticles.forEach(p => {
-    clockCtx.globalAlpha = p.life / 35;
-    clockCtx.fillStyle = p.color;
+    clockCtx.globalAlpha = p.life / 50;
+    clockCtx.fillStyle = 'rgba(180,200,220,.6)';
     clockCtx.beginPath();
     clockCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     clockCtx.fill();
@@ -1469,26 +1487,22 @@ function animateClock() {
   clockTime += 0.016;
 
   updateClock();
-  updateBloom();
-
   drawTracedArc();
   drawVines();
   drawFlowers();
-  drawClockFace();
   drawWords();
   drawHands();
   drawParticles();
-
-  // Center cap
-  clockCtx.beginPath();
-  clockCtx.arc(CCX, CCY, 4, 0, Math.PI * 2);
-  clockCtx.fillStyle = '#2C3E50';
-  clockCtx.fill();
 
   requestAnimationFrame(animateClock);
 }
 
 animateClock();
+
+// Wire up button
+document.getElementById('clockBtn').addEventListener('click', () => {
+  resetClock();
+});
 
 // ===== Hobbies Carousel =====
 const track = document.getElementById('hobbiesTrack');
