@@ -312,32 +312,27 @@ ul{list-style:none}
 .skill-bubble.accent:hover{background:var(--gold-light);border-color:var(--gold);color:var(--gold-dark)}
 .skill-bubble.secondary:hover{background:var(--green-light);border-color:var(--green);color:var(--green)}
 
-/* ===== Pomodoro Timer ===== */
-.pomodoro-container{max-width:420px;margin:0 auto;text-align:center}
-.pomodoro-ring{position:relative;width:260px;height:260px;margin:0 auto 24px}
-.pomodoro-ring svg{transform:rotate(-90deg);width:100%;height:100%}
-.pomodoro-ring circle{fill:none;stroke-width:6}
-.pomodoro-bg{stroke:var(--border-light)}
-.pomodoro-progress{stroke:var(--sky);stroke-linecap:round;
-  transition:stroke-dashoffset .3s linear;animation:none}
-.pomodoro-progress.break-mode{stroke:var(--green)}
-.pomodoro-time{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center}
-.pomodoro-time .pt-min{font-size:56px;font-weight:800;color:var(--navy);font-family:var(--font-mono);
-  letter-spacing:-.03em;line-height:1}
-.pomodoro-time .pt-label{font-size:13px;color:var(--text-muted);margin-top:6px;font-weight:600}
-.pomodoro-time .pt-sessions{font-size:12px;color:var(--text-muted);margin-top:4px}
-.pomodoro-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.pomodoro-preset{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
-.pomodoro-preset button{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);
+/* ===== Decision Wheel ===== */
+.wheel-wrapper{max-width:480px;margin:0 auto;text-align:center}
+.wheel-stage{position:relative;width:300px;height:300px;margin:0 auto 20px}
+.wheel-canvas{width:100%;height:100%}
+.wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+  font-size:32px;z-index:2;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2))}
+.wheel-result{font-size:22px;font-weight:800;color:var(--navy);min-height:36px;
+  margin:12px 0;transition:all .3s ease}
+.wheel-result.bounce{animation:resultBounce .5s ease}
+@keyframes resultBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.wheel-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.wheel-presets button{padding:7px 16px;border-radius:100px;border:1.5px solid var(--border);
   background:var(--warm-white);cursor:pointer;font-size:13px;font-weight:600;
   color:var(--text-secondary);transition:all .2s}
-.pomodoro-preset button.active{background:var(--sky-light);border-color:var(--sky);color:var(--sky-dark)}
-.pomodoro-preset button:hover{border-color:var(--sky)}
-.pomodoro-status{font-size:14px;font-weight:600;color:var(--text-muted);margin-top:18px;
-  min-height:22px;transition:all .3s ease}
-.pomodoro-status.working{color:var(--sky-dark)}
-.pomodoro-status.breaking{color:var(--green)}
+.wheel-presets button:hover,.wheel-presets button.active{border-color:var(--sky);background:var(--sky-light);color:var(--sky-dark)}
+.wheel-input-row{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.wheel-input-row input{flex:1;max-width:280px;padding:10px 14px;border-radius:100px;
+  border:1.5px solid var(--border);font-size:13px;font-family:var(--font-sans);
+  background:var(--warm-white);outline:none;transition:border-color .2s}
+.wheel-input-row input:focus{border-color:var(--sky)}
+.wheel-input-row button{padding:10px 18px}
 
 /* ===== Hobbies Carousel ===== */
 .hobbies-stage{max-width:900px;margin:0 auto;position:relative;overflow:hidden;padding:20px 0 40px}
@@ -554,7 +549,7 @@ ul{list-style:none}
       <a href="#projects">项目作品</a>
       <a href="#internship">实习经历</a>
       <a href="#skills">技能</a>
-      <a href="#game">番茄钟</a>
+      <a href="#game">小工具</a>
       <a href="#hobbies">生活</a>
     </div>
   </div>
@@ -947,34 +942,30 @@ ul{list-style:none}
   </div>
 </section>
 
-<!-- ===== Pomodoro ===== -->
+<!-- ===== Decision Wheel ===== -->
 <section class="section section-alt" id="game">
   <div class="section-header reveal">
     <div class="section-label">Tool</div>
-    <h2 class="section-title">番茄钟</h2>
-    <p class="section-desc">一个轻巧的专注计时器——25分钟专注，5分钟休息</p>
+    <h2 class="section-title">决策转盘</h2>
+    <p class="section-desc">选择恐惧症的救星——转一下，帮你做决定</p>
   </div>
-  <div class="pomodoro-container reveal reveal-delay-1">
-    <div class="pomodoro-preset">
-      <button class="active" onclick="setPomodoroPreset(25)">25min</button>
-      <button onclick="setPomodoroPreset(45)">45min</button>
-      <button onclick="setPomodoroPreset(15)">15min</button>
+  <div class="wheel-wrapper reveal reveal-delay-1">
+    <div class="wheel-presets">
+      <button class="active" onclick="setWheelPreset('food')">🍜 今天吃什么</button>
+      <button onclick="setWheelPreset('weekend')">🌿 周末去哪</button>
+      <button onclick="setWheelPreset('movie')">🎬 看什么电影</button>
+      <button onclick="setWheelPreset('custom')">✏️ 自定义</button>
     </div>
-    <div class="pomodoro-ring">
-      <svg viewBox="0 0 260 260">
-        <circle class="pomodoro-bg" cx="130" cy="130" r="115"/>
-        <circle class="pomodoro-progress" id="pomodoroProgress" cx="130" cy="130" r="115"/>
-      </svg>
-      <div class="pomodoro-time">
-        <div class="pt-min"><span id="pomodoroMins">25</span>:<span id="pomodoroSecs">00</span></div>
-        <div class="pt-sessions" id="pomodoroSessionCount"></div>
-      </div>
+    <div class="wheel-stage">
+      <div class="wheel-pointer">▼</div>
+      <canvas class="wheel-canvas" id="wheelCanvas" width="600" height="600"></canvas>
     </div>
-    <div class="pomodoro-controls">
-      <button class="btn btn-primary" id="pomodoroBtn" onclick="togglePomodoro()">▶ 开始</button>
-      <button class="btn btn-outline" onclick="resetPomodoro()">↺ 重置</button>
+    <div class="wheel-result" id="wheelResult"></div>
+    <button class="btn btn-primary" id="wheelSpinBtn" onclick="spinWheel()">🎯 转一转</button>
+    <div class="wheel-input-row" id="wheelInputRow" style="display:none">
+      <input type="text" id="wheelCustomInput" placeholder="输入选项，用逗号分隔（如：火锅,日料,烧烤）">
+      <button class="btn btn-outline" onclick="applyCustomWheel()">确定</button>
     </div>
-    <div class="pomodoro-status" id="pomodoroStatus">准备专注</div>
   </div>
 </section>
 
@@ -1187,123 +1178,137 @@ skillCards.forEach(card => {
   if (projectsEl) projectsEl.textContent = projects;
 });
 
-// ===== Pomodoro Timer =====
-const CIRCLE_R = 115;
-const CIRCLE_C = 260 / 2;
-const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_R;
+// ===== Decision Wheel =====
+const wheelCanvas = document.getElementById('wheelCanvas');
+const wheelCtx = wheelCanvas.getContext('2d');
+const WHEEL_R = 280;
+const WHEEL_CX = 300;
+const WHEEL_CY = 300;
 
-const pomodoroCircle = document.getElementById('pomodoroProgress');
-pomodoroCircle.style.strokeDasharray = CIRCUMFERENCE;
-pomodoroCircle.style.strokeDashoffset = '0';
+const WHEEL_PRESETS = {
+  food: ['火锅 🍲','日料 🍣','麻辣烫 🌶️','汉堡 🍔','轻食沙拉 🥗','烤肉 🥩','螺蛳粉 🍜','披萨 🍕'],
+  weekend: ['公园散步 🌳','看展 🎨','咖啡馆 ☕','爬山 ⛰️','宅家追剧 📺','逛书店 📚','骑行 🚲','逛超市 🛒'],
+  movie: ['悬疑片 🔍','喜剧片 😂','科幻片 🚀','动画片 🎬','爱情片 💕','纪录片 🌍','恐怖片 👻','文艺片 🎭'],
+  custom: ['选项A','选项B','选项C','选项D','选项E','选项F','选项G','选项H']
+};
 
-let pomodoroRunning = false;
-let pomodoroTimeLeft = 25 * 60;
-let pomodoroTotal = 25 * 60;
-let pomodoroInterval = null;
-let pomodoroIsBreak = false;
-let pomodoroSessionCount = 0;
+let wheelOptions = WHEEL_PRESETS.food;
+let wheelSpinning = false;
+let wheelAngle = 0;
 
-function setPomodoroPreset(mins) {
-  if (pomodoroRunning) return;
-  pomodoroTimeLeft = mins * 60;
-  pomodoroTotal = mins * 60;
-  pomodoroIsBreak = false;
-  pomodoroCircle.classList.remove('break-mode');
-  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
-  document.getElementById('pomodoroStatus').textContent = '准备专注';
-  updatePomodoroDisplay();
-  document.querySelectorAll('.pomodoro-preset button').forEach(b => {
-    b.classList.toggle('active', b.textContent.trim() === `${mins}min`);
-  });
-  updatePomodoroRing();
-}
+const WHEEL_COLORS = ['#7CB3E8','#A8D0F0','#D4A853','#E0C880','#6B9B6F','#8DB890','#E8C8A0','#C0D8E8'];
 
-function togglePomodoro() {
-  if (pomodoroRunning) {
-    pausePomodoro();
-  } else {
-    startPomodoro();
-  }
-}
+function drawWheel() {
+  const n = wheelOptions.length;
+  const sliceAngle = (2 * Math.PI) / n;
+  wheelCtx.clearRect(0, 0, 600, 600);
 
-function startPomodoro() {
-  pomodoroRunning = true;
-  document.getElementById('pomodoroBtn').textContent = '⏸ 暂停';
-  const statusEl = document.getElementById('pomodoroStatus');
-  statusEl.textContent = pomodoroIsBreak ? '放松一下 ☕' : '专注中...';
-  statusEl.className = 'pomodoro-status ' + (pomodoroIsBreak ? 'breaking' : 'working');
+  for (let i = 0; i < n; i++) {
+    const startAngle = wheelAngle + i * sliceAngle;
+    const endAngle = startAngle + sliceAngle;
 
-  pomodoroInterval = setInterval(() => {
-    pomodoroTimeLeft--;
-    updatePomodoroDisplay();
-    updatePomodoroRing();
+    // Slice
+    wheelCtx.beginPath();
+    wheelCtx.moveTo(WHEEL_CX, WHEEL_CY);
+    wheelCtx.arc(WHEEL_CX, WHEEL_CY, WHEEL_R, startAngle, endAngle);
+    wheelCtx.closePath();
+    wheelCtx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+    wheelCtx.fill();
+    wheelCtx.strokeStyle = '#fff';
+    wheelCtx.lineWidth = 3;
+    wheelCtx.stroke();
 
-    if (pomodoroTimeLeft <= 0) {
-      clearInterval(pomodoroInterval);
-      pomodoroRunning = false;
-      document.getElementById('pomodoroBtn').textContent = '▶ 开始';
-
-      if (!pomodoroIsBreak) {
-        // Work session complete → start break
-        pomodoroSessionCount++;
-        pomodoroTimeLeft = 5 * 60;
-        pomodoroTotal = 5 * 60;
-        pomodoroIsBreak = true;
-        pomodoroCircle.classList.add('break-mode');
-        document.getElementById('pomodoroStatus').textContent = '✅ 专注完成！休息一下吧';
-        document.getElementById('pomodoroStatus').className = 'pomodoro-status breaking';
-      } else {
-        // Break complete → reset
-        pomodoroTimeLeft = 25 * 60;
-        pomodoroTotal = 25 * 60;
-        pomodoroIsBreak = false;
-        pomodoroCircle.classList.remove('break-mode');
-        document.getElementById('pomodoroStatus').textContent = '☕ 休息结束，开始新的番茄';
-        document.getElementById('pomodoroStatus').className = 'pomodoro-status';
-      }
-      updatePomodoroDisplay();
-      updatePomodoroRing();
+    // Text
+    const textAngle = startAngle + sliceAngle / 2;
+    const textR = WHEEL_R * .62;
+    wheelCtx.save();
+    wheelCtx.translate(WHEEL_CX + Math.cos(textAngle) * textR, WHEEL_CY + Math.sin(textAngle) * textR);
+    wheelCtx.rotate(textAngle + Math.PI / 2);
+    wheelCtx.fillStyle = '#fff';
+    wheelCtx.font = 'bold 18px -apple-system, "PingFang SC", sans-serif';
+    wheelCtx.textAlign = 'center';
+    const label = wheelOptions[i];
+    if (label.length > 6) {
+      wheelCtx.fillText(label.substring(0, 6), 0, -4);
+      wheelCtx.fillText(label.substring(6), 0, 18);
+    } else {
+      wheelCtx.fillText(label, 0, 6);
     }
-  }, 1000);
+    wheelCtx.restore();
+  }
+
+  // Center circle
+  wheelCtx.beginPath();
+  wheelCtx.arc(WHEEL_CX, WHEEL_CY, 32, 0, 2 * Math.PI);
+  wheelCtx.fillStyle = '#2C3E50';
+  wheelCtx.fill();
 }
 
-function pausePomodoro() {
-  pomodoroRunning = false;
-  clearInterval(pomodoroInterval);
-  document.getElementById('pomodoroBtn').textContent = '▶ 继续';
-  document.getElementById('pomodoroStatus').textContent = '已暂停';
-  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
+// Draw initial
+drawWheel();
+
+function setWheelPreset(type) {
+  if (wheelSpinning) return;
+  wheelOptions = [...WHEEL_PRESETS[type]];
+  document.querySelectorAll('.wheel-presets button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.wheel-presets button[onclick*="${type}"]`)?.classList.add('active');
+  document.getElementById('wheelInputRow').style.display = type === 'custom' ? 'flex' : 'none';
+  document.getElementById('wheelResult').textContent = '';
+  drawWheel();
 }
 
-function resetPomodoro() {
-  pomodoroRunning = false;
-  clearInterval(pomodoroInterval);
-  pomodoroIsBreak = false;
-  pomodoroSessionCount = 0;
-  pomodoroTimeLeft = 25 * 60;
-  pomodoroTotal = 25 * 60;
-  pomodoroCircle.classList.remove('break-mode');
-  document.getElementById('pomodoroBtn').textContent = '▶ 开始';
-  document.getElementById('pomodoroStatus').textContent = '准备专注';
-  document.getElementById('pomodoroStatus').className = 'pomodoro-status';
-  updatePomodoroDisplay();
-  updatePomodoroRing();
-  document.querySelectorAll('.pomodoro-preset button').forEach(b => {
-    b.classList.toggle('active', b.textContent.trim() === '25min');
-  });
+function applyCustomWheel() {
+  const input = document.getElementById('wheelCustomInput').value.trim();
+  if (!input) return;
+  wheelOptions = input.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+  if (wheelOptions.length < 2) return;
+  if (wheelOptions.length > 10) wheelOptions = wheelOptions.slice(0, 10);
+  WHEEL_PRESETS.custom = [...wheelOptions];
+  drawWheel();
+  document.getElementById('wheelResult').textContent = '';
 }
 
-function updatePomodoroDisplay() {
-  const mins = Math.floor(pomodoroTimeLeft / 60);
-  const secs = pomodoroTimeLeft % 60;
-  document.getElementById('pomodoroMins').textContent = String(mins).padStart(2, '0');
-  document.getElementById('pomodoroSecs').textContent = String(secs).padStart(2, '0');
-  document.getElementById('pomodoroSessionCount').textContent = pomodoroSessionCount > 0 ? `🍅 × ${pomodoroSessionCount}` : (pomodoroIsBreak ? '☕ 休息' : '专注');
-}
+function spinWheel() {
+  if (wheelSpinning) return;
+  wheelSpinning = true;
+  document.getElementById('wheelSpinBtn').textContent = '🎰 转动中...';
+  document.getElementById('wheelResult').textContent = '';
+  document.getElementById('wheelResult').classList.remove('bounce');
 
-function updatePomodoroRing() {
-  const offset = CIRCUMFERENCE * (1 - pomodoroTimeLeft / pomodoroTotal);
-  pomodoroCircle.style.strokeDashoffset = offset;
+  const spins = 4 + Math.random() * 5; // 4-9 full rotations
+  const totalAngle = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
+  const duration = 2500 + Math.random() * 1500;
+  const startAngle = wheelAngle;
+  const startTime = performance.now();
+
+  function animate(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    wheelAngle = startAngle + totalAngle * eased;
+    drawWheel();
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      // Determine result
+      const n = wheelOptions.length;
+      const sliceAngle = (2 * Math.PI) / n;
+      const normalizedAngle = ((wheelAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      // The pointer is at top (270 degrees from center, or -PI/2)
+      const pointerAngle = (2 * Math.PI - normalizedAngle + Math.PI / 2) % (2 * Math.PI);
+      const idx = Math.floor(pointerAngle / sliceAngle);
+      const result = wheelOptions[idx % n];
+
+      wheelSpinning = false;
+      document.getElementById('wheelSpinBtn').textContent = '🎯 转一转';
+      const resultEl = document.getElementById('wheelResult');
+      resultEl.textContent = '👉 ' + result;
+      resultEl.classList.add('bounce');
+    }
+  }
+  requestAnimationFrame(animate);
 }
 
 // ===== Hobbies Carousel =====
