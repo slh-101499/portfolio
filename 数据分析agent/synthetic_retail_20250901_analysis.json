@@ -1,0 +1,163 @@
+{
+  "findings": [
+    {
+      "id": "P1",
+      "field": "days_since_last_visit",
+      "issue_type": "负值/越界",
+      "severity": "P0",
+      "description": "「距上次到访天数」出现 13388 行负值，最小 -59 天，物理上不可能",
+      "evidence": "13388 行负值（1.67%），范围 -59 ~ 174"
+    },
+    {
+      "id": "P2",
+      "field": "transaction_amount",
+      "issue_type": "重尾/异常值",
+      "severity": "P0",
+      "description": "交易金额严重重尾，均值被极端大单拉高，不能用 Pearson 相关",
+      "evidence": "skew=44.9，max=79772 vs median=61.4，mean=114.4"
+    },
+    {
+      "id": "P3",
+      "field": "annual_income",
+      "issue_type": "重尾/异常值",
+      "severity": "P1",
+      "description": "年收入严重重尾，存在近 300 万的极端值",
+      "evidence": "skew=37.3，max=299.7万 vs median=2.97万，mean=3.52万"
+    },
+    {
+      "id": "P4",
+      "field": "avg_item_price",
+      "issue_type": "重尾/异常值",
+      "severity": "P1",
+      "description": "单价重尾，最高单价近 5000 元",
+      "evidence": "skew=43.7，max=4979 vs median=20.09"
+    },
+    {
+      "id": "P5",
+      "field": "basket_size",
+      "issue_type": "重尾/异常值",
+      "severity": "P1",
+      "description": "客单件数重尾，最大一单 149 件",
+      "evidence": "skew=8.1，max=149 vs median=3，mean=5.1"
+    },
+    {
+      "id": "P6",
+      "field": "annual_income/loyalty_points/return_rate/online_purchase_pct/satisfaction_score",
+      "issue_type": "缺失值",
+      "severity": "P1",
+      "description": "5 列存在缺失，共 23997 行(3.0%)至少缺一列，需确认缺失是否随机",
+      "evidence": "annual_income 缺 4887、satisfaction_score 缺 4864、loyalty_points 缺 4790、return_rate 缺 4770、online_purchase_pct 缺 4686"
+    },
+    {
+      "id": "P7",
+      "field": "loyalty_points",
+      "issue_type": "条件缺失",
+      "severity": "P1",
+      "description": "是会员(loyalty_member=Yes)却 loyalty_points 为 NaN，会员应有点数，属条件缺失异常",
+      "evidence": "Yes 会员中 2758 行 loyalty_points=NaN"
+    },
+    {
+      "id": "P8",
+      "field": "age",
+      "issue_type": "截断/边界聚集",
+      "severity": "P1",
+      "description": "年龄在 16 岁处异常聚集，疑似截断或「<16 岁归为 16」的编码",
+      "evidence": "age==16 有 36287 行，占 4.54%，是第二高频值的 1.54 倍"
+    },
+    {
+      "id": "P9",
+      "field": "customer_segment",
+      "issue_type": "分类编码当数值",
+      "severity": "P1",
+      "description": "customer_segment 是 0/1/2/3 的类别编码，非连续数值，不该直接算均值/相关",
+      "evidence": "取值仅 {0,1,2,3}，mean=1.66 无业务含义"
+    }
+  ],
+  "answers": [
+    {
+      "question_id": "R1",
+      "question": "basket_size 与 transaction_amount 是否相关？方向强弱？",
+      "answer": "强正相关（单调），Spearman=0.826；Pearson 被重尾压到 ≈0 失真",
+      "evidence": "Spearman 0.826 vs Pearson 0.008"
+    },
+    {
+      "question_id": "R2",
+      "question": "忠诚会员客单价是否高于非会员？",
+      "answer": "是，会员显著更高（+36.24 元，+39%）",
+      "evidence": "Yes 129.76 (n=460751) vs No 93.52 (n=339249)"
+    },
+    {
+      "question_id": "R3",
+      "question": "哪个门店类型客单价最高？",
+      "answer": "Luxury 最高",
+      "evidence": "Luxury 150.34 > Premium 127.50 > Standard 115.53 > Discount 104.37"
+    },
+    {
+      "question_id": "R4",
+      "question": "哪个支付方式满意度最高？",
+      "answer": "Mobile 最高",
+      "evidence": "Mobile 6.28 > Credit 5.80 > Debit 5.49 > Cash 4.95"
+    },
+    {
+      "question_id": "R5",
+      "question": "satisfaction_score 与 return_rate 是否相关？",
+      "answer": "中等负相关，满意度越高退货率越低",
+      "evidence": "Spearman=-0.31，Pearson=-0.32（两种方法一致）"
+    },
+    {
+      "question_id": "R6",
+      "question": "annual_income 与 transaction_amount 是否相关？",
+      "answer": "弱-中等正相关（单调），Pearson 失真",
+      "evidence": "Spearman 0.334 vs Pearson 0.005"
+    },
+    {
+      "question_id": "R7",
+      "question": "不同品类退货率是否有明显差异？",
+      "answer": "无明显差异，几乎相同",
+      "evidence": "各品类 0.1881 ~ 0.1884，差异仅第 4 位小数"
+    },
+    {
+      "question_id": "R8",
+      "question": "月度客单价是否随时间单调变化？",
+      "answer": "无明显单调趋势，随机波动",
+      "evidence": "月度均值 95 ~ 144 元，月份序相关不显著"
+    }
+  ],
+  "insights": [
+    {
+      "id": "I1",
+      "title": "到店频次非单调：7-12 次/月是最佳区间，50+ 次反而回落",
+      "insight": "客单价随到店频次先升后降：7-12 次/月达 161.4 元，但 50+ 次/月的「到店狂人」反而只有 128.4 元，甚至低于 3-6 次/月的 124 元。到店频次不是越高越值钱，存在饱和点。",
+      "evidence": "0次=101.7 → 1-2=104.5 → 3-6=124.0 → 7-12=161.4 → 50+=128.4",
+      "action": "别盲目用补贴堆高频到店；把「7-12 次/月」设为目标频次，对 50+ 次用户引导提客单而非加频次。"
+    },
+    {
+      "id": "I2",
+      "title": "折扣敏感度反向：对折扣敏感的人花得少，却更满意、退货更低",
+      "insight": "折扣敏感度越高的客户客单价越低（139.0 → 98.7），但满意度反而越高（5.30 → 5.71）、退货率越低（0.200 → 0.177）。价格敏感客户是「花小钱买开心」，促销对他们是情绪价值而非收入引擎。",
+      "evidence": "低敏 139.0元/5.30分 → 极高敏 98.7元/5.71分，退货 0.200→0.177",
+      "action": "促销能安抚价格敏感客户、压低退货，但别指望他们贡献客单价；高价值客户应走会员权益而非打折。"
+    },
+    {
+      "id": "I3",
+      "title": "Pareto 集中：segment 3 占 33% 记录，却贡献 45.7% 营收",
+      "insight": "segment 3 客户仅占 33.0% 的交易记录，却贡献 45.7% 营收；而 segment 0 占 22.9% 记录只贡献 14.7%。营收高度向头部客户集中，简单按「记录数」看会严重低估头部价值。",
+      "evidence": "seg3 记录 33.0%/营收 45.7%；seg0 记录 22.9%/营收 14.7%",
+      "action": "资源、权益、客服优先级向 segment 3 倾斜；用「营收贡献」而非「订单数」做客户分层。"
+    },
+    {
+      "id": "I4",
+      "title": "满意度是领先指标：低满意度客户退货高 50%、LTV 低 43%",
+      "insight": "满意度从 1-3 分升到 8-10 分，退货率从 0.228 降到 0.149（-35%），LTV 从 873 升到 1530（+75%）。满意度是长期价值与退货风险的先行信号，且梯度清晰、几乎单调。",
+      "evidence": "1-3分 退货0.228/LTV873 → 8-10分 退货0.149/LTV1530",
+      "action": "把满意度监控前移到「退货/流失」之前；对满意度<5 分的客户做主动挽留，而非等退货发生。"
+    },
+    {
+      "id": "I5",
+      "title": "会员溢价随门店档次放大：Luxury 会员溢价 62.9 元，Discount 仅 32.3 元",
+      "insight": "忠诚会员相对非会员的客单价溢价，在高端门店最大（Luxury +62.9，+57%），在折扣店最小（Discount +32.3，+37%）。会员计划的价值随门店档次放大，一刀切的会员政策会浪费高端门店的提价空间。",
+      "evidence": "Luxury +62.9 > Premium +46.7 > Discount +32.3 > Standard +31.7",
+      "action": "高端门店重点推会员、可加码会员专属权益；折扣店会员权益可适当降级以控制成本。"
+    }
+  ]
+}

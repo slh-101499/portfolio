@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>邵麟涵 · 数据分析师 | 产品运营</title>
+<title>邵麟涵 · 数据分析师 | 用户运营 | 风险策略</title>
 <style>
 /* ===== CSS Variables ===== */
 :root {
@@ -248,6 +248,14 @@ ul{list-style:none}
 .highlight-box.blue li::before{color:var(--sky)}
 .highlight-box.gold li::before{color:var(--gold)}
 .highlight-box.green li::before{color:var(--green)}
+
+/* Indigo accent (数据分析 Agent) */
+.tag.indigo{background:#EEF0FE;color:#4f46e5}
+.metric-value.indigo{color:#4f46e5}
+.pipeline-dot.indigo{background:#EEF0FE;color:#4f46e5}
+.highlight-box.indigo{background:#F5F5FF;border:1px solid rgba(99,102,241,.25)}
+.highlight-box.indigo h5{color:#4f46e5}
+.highlight-box.indigo li::before{color:#6366f1}
 
 /* Certificate */
 .cert-card{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;
@@ -497,6 +505,7 @@ ul{list-style:none}
 .reveal-delay-1{transition-delay:.1s}
 .reveal-delay-2{transition-delay:.2s}
 .reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
 
 /* Card tilt */
 .tilt-element{transform-style:preserve-3d;perspective:1000px}
@@ -568,12 +577,12 @@ ul{list-style:none}
       <span class="loc-dot"></span>
       <span>📍 吉林长春</span>
       <span class="loc-dot"></span>
-      <span>💼 数据分析 · 商业分析 · AI产品</span>
+      <span>💼 数据分析 · 用户运营 · 风险策略</span>
     </div>
     <div class="hero-actions">
       <a href="#projects" class="btn btn-primary">📂 查看作品集</a>
       <a href="#about" class="btn btn-outline">👤 了解更多</a>
-      <a href="邵麟涵_简历.pdf" class="btn btn-gold" target="_blank">📄 下载简历</a>
+      <a href="slh简历.pdf" class="btn btn-gold" target="_blank">📄 下载简历</a>
     </div>
   </div>
   <div class="scroll-hint" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
@@ -596,9 +605,8 @@ ul{list-style:none}
         <h3>邵麟涵 · Liana</h3>
         <div class="role-tags">
           <span class="role-tag">📊 数据分析</span>
-          <span class="role-tag">📈 商业分析</span>
-          <span class="role-tag">💡 用户产品</span>
-          <span class="role-tag">🤖 AI产品</span>
+          <span class="role-tag">📈 用户运营</span>
+          <span class="role-tag">🛡️ 风险策略</span>
         </div>
         <div class="now-badge">🟢 NOW · 数据分析实习 @ 金风科技</div>
       </div>
@@ -648,7 +656,7 @@ ul{list-style:none}
   <div class="section-header reveal">
     <div class="section-label">Projects</div>
     <h2 class="section-title">项目作品</h2>
-    <p class="section-desc">三个跨领域数据分析项目，每一项都承载着探索与成长</p>
+    <p class="section-desc">从学科竞赛到自建 AI Agent，每一件作品都承载着探索与成长</p>
   </div>
 
   <!-- Project 1: Metro -->
@@ -841,6 +849,64 @@ ul{list-style:none}
       </div>
     </div>
   </div>
+
+  <!-- Project 4: Data Analysis Agent -->
+  <div class="project reveal reveal-delay-4">
+    <div class="project-card tilt-element">
+      <div class="project-cover">
+        <img src="数据分析agent/封面.png" alt="数据分析 Agent">
+        <div class="project-cover-overlay"></div>
+        <div class="project-cover-badge">🛠️ 自建工具</div>
+        <div class="project-cover-title">
+          <h3>数据分析 Agent · 智能零售深度分析报告</h3>
+          <div class="project-subtitle">自建 AI Agent · 本地大模型驱动 · 端到端自动化分析</div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-body-grid">
+          <div>
+            <div class="project-tags">
+              <span class="tag indigo">AI Agent</span><span class="tag indigo">PandasAI</span>
+              <span class="tag indigo">本地 LLM</span><span class="tag indigo">Ollama</span>
+              <span class="tag indigo">Plotly</span>
+            </div>
+            <div class="desc-block">
+              <h4>🔍 项目简介</h4>
+              <p>自己动手搭建的数据分析 Agent——用自然语言向本地大模型提问，自动完成数据质量审查、关键关系分析与业务洞察，并一键生成可交互的 Plotly 报告网页。本案例对 80 万条合成零售交易数据做了端到端演示。</p>
+            </div>
+            <div class="highlight-box indigo">
+              <h5>⭐ Agent 三大能力</h5>
+              <ul>
+                <li><strong>自然语言问数</strong> — ask.py 封装 PandasAI + 本地 Ollama，中文问答即得答案与图表</li>
+                <li><strong>本地大模型</strong> — pandasai_ollama.py 自实现 OllamaLLM 适配器，接 qwen2.5-coder，数据不出本机</li>
+                <li><strong>自动生成报告</strong> — report_builder.py 将分析结果渲染为自包含 Plotly 交互报告（离线可分享）</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="metrics-grid">
+              <div class="metric-card"><div class="metric-value indigo">80万</div><div class="metric-label">交易记录 × 22 字段</div></div>
+              <div class="metric-card"><div class="metric-value indigo">4</div><div class="metric-label">Agent 代码模块</div></div>
+              <div class="metric-card"><div class="metric-value indigo">9</div><div class="metric-label">数据质量发现（P0/P1）</div></div>
+              <div class="metric-card"><div class="metric-value indigo">5</div><div class="metric-label">报告章节</div></div>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step"><div class="pipeline-dot indigo">1</div><div class="pipeline-label">80万×22<br>原始数据</div></div>
+              <div class="pipeline-step"><div class="pipeline-dot indigo">2</div><div class="pipeline-label">自然语言问答<br>PandasAI+Ollama</div></div>
+              <div class="pipeline-step"><div class="pipeline-dot indigo">3</div><div class="pipeline-label">数据质量审查<br>9项P0/P1</div></div>
+              <div class="pipeline-step"><div class="pipeline-dot indigo">4</div><div class="pipeline-label">关键关系+洞察<br>8问答·5洞察</div></div>
+              <div class="pipeline-step"><div class="pipeline-dot indigo">5</div><div class="pipeline-label">自包含报告<br>Plotly交互</div></div>
+            </div>
+            <div class="resource-bar">
+              <a class="resource-btn report" href="数据分析agent/synthetic_retail_20250901_report_v2.html" target="_blank"><span class="rb-icon">📊</span> 查看分析报告<span class="rb-badge">HTML</span></a>
+              <span class="resource-btn code" onclick="openCodeModal('agent')"><span class="rb-icon">💻</span> 源代码<span class="rb-badge">4文件</span></span>
+              <span class="resource-btn data" onclick="openDataModal('agent')"><span class="rb-icon">📄</span> 分析结果<span class="rb-badge">JSON</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ===== Internship Timeline ===== -->
@@ -1008,7 +1074,7 @@ ul{list-style:none}
   <div class="footer-info">
     长春理工大学 · 应用统计硕士<br>
     📧 2685411940@qq.com · 📱 19843161014<br>
-    数据分析 · 商业分析 · 用户产品 · AI产品
+    数据分析 · 用户运营 · 风险策略
   </div>
   <div class="footer-copy">© 2026 个人作品集 · 保持热爱，奔赴山海</div>
 </footer>
@@ -1048,8 +1114,8 @@ window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.
 // ===== Typewriter Effect =====
 const phrases = [
   '用数据洞察规律，以模型驱动决策',
-  '数据分析 · 商业分析 · 用户产品 · AI产品',
-  '在数据与产品之间，找到属于自己的答案',
+  '数据分析 · 用户运营 · 风险策略',
+  '用数据寻找规律，也寻找属于自己的答案',
   '探索数据背后的故事 ✨'
 ];
 let phraseIdx = 0, charIdx = 0, isDeleting = false;
@@ -1743,6 +1809,13 @@ const projectData = {
     dataBase: null,
     codeFiles: ['01_feature_extraction.py','02_metadata_extraction.py','03_DANN.py','04_unified_khz.py','05_TCA_XGBoost.py','06_SVM_XGBoost_RF.R'],
     dataFiles: []
+  },
+  agent: {
+    name: '数据分析 Agent',
+    codeBase: '数据分析agent/',
+    dataBase: '数据分析agent/',
+    codeFiles: ['ask.py','pandasai_ollama.py','report_builder.py','build_retail_report.py'],
+    dataFiles: ['synthetic_retail_20250901_analysis.json']
   }
 };
 
